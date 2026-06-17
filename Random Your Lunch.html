@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>สุ่มอาหาร</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Sarabun', 'Segoe UI', sans-serif;
+    background: #FFF8F0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 16px;
+    color: #2D2D2D;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #C0392B;
+    margin-bottom: 4px;
+    text-align: center;
+  }
+
+  .subtitle {
+    font-size: 0.9rem;
+    color: #888;
+    margin-bottom: 28px;
+  }
+
+  .card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 20px;
+  }
+
+  .section-label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #999;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  /* Filter chips */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .chip {
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 2px solid #E0E0E0;
+    background: white;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .chip:hover { border-color: #C0392B; color: #C0392B; }
+  .chip.active { background: #C0392B; border-color: #C0392B; color: white; font-weight: 600; }
+
+  /* Spin button */
+  .btn-spin {
+    width: 100%;
+    max-width: 480px;
+    padding: 18px;
+    border-radius: 16px;
+    background: #C0392B;
+    color: white;
+    font-size: 1.15rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 0.02em;
+    transition: transform 0.1s, background 0.15s;
+    box-shadow: 0 4px 14px rgba(192,57,43,0.35);
+  }
+
+  .btn-spin:hover { background: #A93226; }
+  .btn-spin:active { transform: scale(0.97); }
+  .btn-spin:disabled { background: #CCC; box-shadow: none; cursor: not-allowed; }
+
+  /* Result */
+  .result-card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+    padding: 32px 24px;
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    margin-top: 20px;
+    display: none;
+  }
+
+  .result-card.show { display: block; }
+
+  .result-label { font-size: 0.85rem; color: #999; margin-bottom: 8px; }
+
+  .result-menu {
+    font-size: 2rem;
+    font-weight: 800;
+    color: #C0392B;
+    margin-bottom: 6px;
+    animation: pop 0.3s ease;
+  }
+
+  .result-meat {
+    font-size: 1.1rem;
+    color: #555;
+    margin-bottom: 16px;
+  }
+
+  .result-badge {
+    display: inline-block;
+    background: #FFF0EE;
+    color: #C0392B;
+    border-radius: 999px;
+    padding: 5px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0.85); opacity: 0; }
+    60% { transform: scale(1.07); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .divider { height: 1px; background: #F0F0F0; margin: 20px 0; }
+
+  /* History */
+  .history { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+
+  .history-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    background: #FAFAFA;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: #444;
+  }
+
+  .history-item .menu-name { font-weight: 600; }
+  .history-item .meat-tag {
+    font-size: 0.8rem;
+    color: #888;
+    background: #F0F0F0;
+    padding: 3px 10px;
+    border-radius: 999px;
+  }
+
+  .empty-history { text-align: center; color: #BBB; font-size: 0.9rem; padding: 12px 0; }
+</style>
+</head>
+<body>
+
+<h1>🎲 สุ่มอาหารวันนี้</h1>
+
+<!-- Filter Section -->
+<div class="card">
+  <div class="section-label">🥩 กรองเนื้อสัตว์</div>
+  <div class="chips" id="meatFilter">
+    <div class="chip active" data-value="all">ทั้งหมด</div>
+    <div class="chip" data-value="ไก่">ไก่</div>
+    <div class="chip" data-value="หมู">หมู</div>
+    <div class="chip" data-value="กุ้ง">กุ้ง</div>
+    <div class="chip" data-value="เนื้อ">เนื้อ</div>
+    <div class="chip" data-value="ปลา">ปลา</div>
+    <div class="chip" data-value="เต้าหู้">เต้าหู้ 🌱</div>
+  </div>
+
+  <div class="divider"></div>
+
+  <div class="section-label">🍳 กรองประเภทเมนู</div>
+  <div class="chips" id="typeFilter">
+    <div class="chip active" data-value="all">ทั้งหมด</div>
+    <div class="chip" data-value="ผัด">ผัด</div>
+    <div class="chip" data-value="ข้าวผัด">ข้าวผัด</div>
+    <div class="chip" data-value="other">อื่นๆ</div>
+  </div>
+</div>
+
+<button class="btn-spin" onclick="spin()">🎲 สุ่มเมนู!</button>
+
+<!-- Result -->
+<div class="result-card" id="resultCard">
+  <div class="result-label">เมนูของคุณวันนี้คือ...</div>
+  <div class="result-menu" id="resultMenu"></div>
+  <div class="result-meat" id="resultMeat"></div>
+
+  <div class="divider"></div>
+  <div class="section-label" style="text-align:left">ประวัติการสุ่ม</div>
+  <div class="history" id="history">
+    <div class="empty-history" id="emptyHistory">ยังไม่มีประวัติ</div>
+  </div>
+</div>
+
+<script>
+const menus = [
+  "กะเพรา","ผัดฉ่า","ผัดพริกเผา","คั่วกลิ้ง","ผัดขิง",
+  "ผัดเม็ดมะม่วง","ผัดพริกไทยดำ","ผัดพริกขิงถั่วฝักยาว","ผัดกะปิ","ผัดพริกแกงป่า",
+  "ผัดซอส","ผัดไข่เค็ม","ข้าวผัด","ข้าวผัดน้ำพริกเผา","ข้าวผัดต้มยำ",
+  "ข้าวผัดขี้เมา","ข้าวผัดผงกะหรี่","ข้าวผัดนรก","ข้าวผัดแกงเขียวหวาน","ผัดคะน้า",
+  "ผัดผักรวมมิตร","ผัดวุ้นเส้น","ผัดกระเทียม","คั่วพริกเกลือ","ตะไคร้",
+  "มะนาว","ผัดผงกะหรี่","เทอริยากิ","ผัดหนำเลี๊ยบ","ฉู่ฉี่"
+];
+
+const meats = ["ไก่","หมู","กุ้ง","เนื้อ","ปลา","เต้าหู้"];
+const meatEmojis = { "ไก่":"🍗", "หมู":"🥩", "กุ้ง":"🦐", "เนื้อ":"🥩", "ปลา":"🐟", "เต้าหู้":"🌱" };
+
+let selectedMeat = "all";
+let selectedType = "all";
+let history = [];
+
+// Chip toggle logic
+document.getElementById('meatFilter').addEventListener('click', e => {
+  if (!e.target.classList.contains('chip')) return;
+  document.querySelectorAll('#meatFilter .chip').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active');
+  selectedMeat = e.target.dataset.value;
+});
+
+document.getElementById('typeFilter').addEventListener('click', e => {
+  if (!e.target.classList.contains('chip')) return;
+  document.querySelectorAll('#typeFilter .chip').forEach(c => c.classList.remove('active'));
+  e.target.classList.add('active');
+  selectedType = e.target.dataset.value;
+});
+
+function filterMenus() {
+  return menus.filter(m => {
+    if (selectedType === 'ผัด') return m.startsWith('ผัด') || m.startsWith('คั่ว') || m.startsWith('ตะไคร้') || m.startsWith('มะนาว') || m.startsWith('เทอริยากิ') || m.startsWith('ฉู่ฉี่');
+    if (selectedType === 'ข้าวผัด') return m.startsWith('ข้าว');
+    if (selectedType === 'other') return !m.startsWith('ผัด') && !m.startsWith('ข้าว') && !m.startsWith('คั่ว');
+    return true;
+  });
+}
+
+function filterMeats() {
+  if (selectedMeat === 'all') return meats;
+  return [selectedMeat];
+}
+
+function spin() {
+  const filteredMenus = filterMenus();
+  const filteredMeats = filterMeats();
+
+  if (filteredMenus.length === 0) {
+    alert('ไม่มีเมนูในหมวดที่เลือก กรุณาเปลี่ยน filter');
+    return;
+  }
+
+  const menu = filteredMenus[Math.floor(Math.random() * filteredMenus.length)];
+  const meat = filteredMeats[Math.floor(Math.random() * filteredMeats.length)];
+  const full = menu + meat;
+
+  // Show result
+  document.getElementById('resultMenu').textContent = full;
+  document.getElementById('resultMeat').textContent = meatEmojis[meat] + ' ' + meat;
+  document.getElementById('resultCard').classList.add('show');
+
+  // Trigger re-animation
+  const el = document.getElementById('resultMenu');
+  el.style.animation = 'none';
+  el.offsetHeight; // reflow
+  el.style.animation = '';
+
+  // Add to history
+  history.unshift({ menu, meat });
+  if (history.length > 5) history.pop();
+  renderHistory();
+}
+
+function renderHistory() {
+  const container = document.getElementById('history');
+  const empty = document.getElementById('emptyHistory');
+
+  if (history.length === 0) {
+    empty.style.display = 'block';
+    return;
+  }
+  empty.style.display = 'none';
+
+  // Remove old history items (keep emptyHistory)
+  container.querySelectorAll('.history-item').forEach(el => el.remove());
+
+  history.forEach(h => {
+    const div = document.createElement('div');
+    div.className = 'history-item';
+    div.innerHTML = `<span class="menu-name">${h.menu}${h.meat}</span><span class="meat-tag">${meatEmojis[h.meat]} ${h.meat}</span>`;
+    container.appendChild(div);
+  });
+}
+</script>
+</body>
+</html>
