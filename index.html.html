@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>วันนี้กินอะไรดี?</title>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700;800&family=Fredoka+One&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Sarabun',sans-serif;
+  background:#eef2f7;
+  min-height:100vh;
+  display:flex;flex-direction:column;align-items:center;
+  padding:1.75rem 1rem 5rem;
+  overflow-x:hidden;
+}
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background-image:radial-gradient(circle,rgba(58,104,136,.07) 1.5px,transparent 1.5px);
+  background-size:24px 24px;pointer-events:none;
+}
+
+/* FLOATERS */
+#floaters{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.fl{position:absolute;opacity:0;animation:floatUp linear infinite;user-select:none;filter:saturate(.6)}
+@keyframes floatUp{
+  0%{transform:translateY(105vh) rotate(0deg);opacity:0}
+  8%{opacity:.09}88%{opacity:.09}
+  100%{transform:translateY(-8vh) rotate(300deg);opacity:0}
+}
+
+/* HEADER */
+.hdr{position:relative;z-index:1;text-align:center;margin-bottom:1.5rem}
+.hdr h1{
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(1.9rem,6vw,2.7rem);
+  letter-spacing:.01em;line-height:1.1;
+}
+.hdr h1 .grad{
+  background:linear-gradient(135deg,#4a7898 10%,#6888b0 50%,#8878a8 90%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hdr h1 .ico{
+  -webkit-text-fill-color:initial;
+  font-size:clamp(1.5rem,4.5vw,2.1rem);
+  margin-left:6px;
+  vertical-align:middle;
+}
+.hdr p{margin-top:.3rem;font-size:.85rem;color:#8898a8}
+
+/* CARD */
+.card{
+  position:relative;z-index:1;
+  background:#fff;border-radius:26px;
+  padding:1.6rem 1.4rem;
+  width:100%;max-width:460px;
+  box-shadow:0 6px 0 #d8e2ec,0 10px 36px rgba(58,104,136,.1);
+  border:1.5px solid #dde6f0;
+}
+
+/* SECTION LABEL */
+.sec-label{
+  font-size:.68rem;font-weight:800;letter-spacing:.12em;
+  text-transform:uppercase;color:#a0b0c0;margin-bottom:10px;
+}
+
+/* MOOD GRID */
+.mood-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.4rem}
+.mood-card{
+  border-radius:14px;padding:10px 8px;
+  border:2px solid transparent;
+  cursor:pointer;text-align:center;
+  transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;
+  user-select:none;
+}
+.mood-card:hover{transform:translateY(-2px) scale(1.04)}
+.mood-card:active{transform:scale(.97)}
+.mood-card.selected{box-shadow:0 4px 14px rgba(0,0,0,.12)}
+.mood-emoji{font-size:1.6rem;line-height:1;display:block;margin-bottom:4px}
+.mood-lbl{font-size:.72rem;font-weight:700;line-height:1.3}
+
+/* CAT GRID (เลือกเอง) */
+.cat-section{overflow:hidden;max-height:0;transition:max-height .35s ease,opacity .3s ease;opacity:0}
+.cat-section.open{max-height:200px;opacity:1}
+.cat-grid{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1.3rem;padding-top:2px}
+.cat-tab{
+  font-size:.75rem;font-weight:800;padding:6px 12px;border-radius:999px;
+  border:1.5px solid transparent;cursor:pointer;
+  transition:all .18s cubic-bezier(.34,1.4,.64,1);white-space:nowrap;
+}
+.cat-tab:hover{transform:scale(1.05)}
+.cat-tab:active{transform:scale(.97)}
+
+/* SPIN BTN */
+.spin-btn{
+  width:100%;padding:1.05rem;
+  font-family:'Fredoka One',cursive;font-size:1.25rem;letter-spacing:.03em;
+  border:none;border-radius:16px;cursor:pointer;
+  background:linear-gradient(135deg,#4a7898,#7868a8);color:#fff;
+  box-shadow:0 5px 0 #305870,0 8px 22px rgba(58,104,136,.25);
+  transition:transform .1s,box-shadow .1s,opacity .2s;
+  opacity:.45;pointer-events:none;
+}
+.spin-btn.ready{opacity:1;pointer-events:all}
+.spin-btn:active{transform:translateY(4px);box-shadow:0 1px 0 #305870}
+.spin-btn:disabled{opacity:.6;pointer-events:none}
+
+/* RESULT */
+.result-wrap{
+  min-height:100px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  margin-top:1.4rem;text-align:center;gap:6px;
+}
+.ph{font-size:.9rem;color:#b8c8d8}
+
+.result-bubble{
+  width:100%;border-radius:18px;padding:1.1rem 1.4rem;
+  animation:popIn .38s cubic-bezier(.34,1.56,.64,1) forwards;
+}
+@keyframes popIn{from{transform:scale(.72);opacity:0}to{transform:scale(1);opacity:1}}
+.r-badge{
+  display:inline-block;font-size:.7rem;font-weight:800;
+  letter-spacing:.07em;padding:3px 12px;border-radius:999px;
+  color:#fff;margin-bottom:7px;
+}
+.r-name{
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(1.8rem,6vw,2.3rem);line-height:1.1;
+}
+.r-because{font-size:.8rem;margin-top:5px;opacity:.7;font-style:italic}
+.r-vibe{font-size:.82rem;margin-top:3px;opacity:.65}
+
+.act-row{display:flex;gap:8px;margin-top:.75rem;width:100%}
+.act-btn{
+  flex:1;padding:.7rem;border-radius:12px;font-size:.88rem;font-weight:700;
+  font-family:'Sarabun',sans-serif;cursor:pointer;transition:all .15s;border:1.5px solid transparent;
+}
+.btn-again{background:#eef2f7;color:#4a7898;border-color:#ccd8e4}
+.btn-again:hover{background:#e2eaf4}
+.btn-ok{background:linear-gradient(135deg,#4a7898,#7868a8);color:#fff;box-shadow:0 3px 0 #305870}
+.btn-ok:active{transform:translateY(2px);box-shadow:0 1px 0 #305870}
+
+/* ROLLING */
+.rolling{
+  font-family:'Fredoka One',cursive;
+  font-size:clamp(1.6rem,5vw,2rem);
+  color:#4a7898;min-height:2.6rem;
+  animation:blink .1s steps(1) infinite;
+}
+@keyframes blink{50%{opacity:.15}}
+
+/* HISTORY */
+.hist-sec{display:none;margin-top:1.1rem}
+hr.dash{border:none;border-top:1.5px dashed #dde6f0;margin:.8rem 0}
+.hist-row{display:flex;align-items:center;gap:8px;font-size:.82rem;color:#98aabb;padding:6px 10px;border-radius:9px;background:#f4f7fa;margin-bottom:5px;transition:background .15s}
+.hist-row:hover{background:#eaf0f6;color:#6888a0}
+.hist-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* CONFETTI */
+canvas#conf{position:fixed;inset:0;pointer-events:none;z-index:999}
+</style>
+</head>
+<body>
+<canvas id="conf"></canvas>
+<div id="floaters"></div>
+
+<div class="hdr">
+  <h1><span class="grad">วันนี้กินอะไรดี?</span><span class="ico">🍱</span></h1>
+  <p>บอก mood · ให้ชะตาเลือกให้</p>
+</div>
+
+<div class="card">
+  <p class="sec-label">ตอนนี้รู้สึกแบบไหน?</p>
+  <div class="mood-grid" id="moodGrid"></div>
+
+  <div class="cat-section" id="catSection">
+    <p class="sec-label" style="margin-top:2px">เลือกหมวด</p>
+    <div class="cat-grid" id="catGrid"></div>
+  </div>
+
+  <button class="spin-btn" id="spinBtn" onclick="spin()">🎲 สุ่มเมนู!</button>
+
+  <div class="result-wrap" id="resultWrap">
+    <p class="ph">เลือก mood แล้วกดสุ่มเลย</p>
+  </div>
+
+  <div class="hist-sec" id="histSec">
+    <hr class="dash">
+    <p class="sec-label">สุ่มไปแล้ว</p>
+    <div id="histList"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════ DATA ═══════════════════════ */
+const CAT = {
+  rice:    {label:'🍚 ข้าว',    bg:'#f5ece6',tc:'#9a4828'},
+  noodle:  {label:'🍜 เส้น',    bg:'#f5f0e2',tc:'#8a6018'},
+  protein: {label:'🥩 โปรตีน', bg:'#f2e8e8',tc:'#943030'},
+  clean:   {label:'🥗 คลีน',   bg:'#e6f0ea',tc:'#3a6848'},
+  jp:      {label:'🍣 ญี่ปุ่น/เกาหลี',bg:'#ede8f4',tc:'#6040888'},
+  west:    {label:'🍔 ตะวันตก',bg:'#e4eef6',tc:'#2a5878'},
+  chinese: {label:'🥟 จีน',    bg:'#f0e8e4',tc:'#884030'},
+  street:  {label:'🛺 สตรีท',  bg:'#f4f0e0',tc:'#786020'},
+  snack:   {label:'🍡 ของหวาน',bg:'#f4e8f0',tc:'#885068'},
+};
+// fix jp tc typo
+CAT.jp.tc = '#604088';
+
+const MOODS = [
+  {id:'starving', emoji:'😵‍💫', label:'หิวมาก ตาลายแล้ว', bg:'#f5ece6',tc:'#9a4828', cats:['rice','noodle','protein','street','chinese'], because:'ท้องว่างมาแต่เช้า ต้องอิ่มหนำ'},
+  {id:'normal',   emoji:'😁',   label:'หิวปกติ กินได้ทุกเมนู', bg:'#e6eef5',tc:'#305878', cats:'all',                               because:'ไม่มีเงื่อนไข ชะตาตัดสินให้เลย'},
+  {id:'light',    emoji:'🥱',   label:'ไม่ค่อยหิว',        bg:'#e8f2ec',tc:'#3a6848', cats:['clean','snack','street'],              because:'ท้องยังอิ่มนิดๆ เอาเบาๆ ก่อน'},
+  {id:'crave',    emoji:'🤤',   label:'อยากของอร่อย',      bg:'#f0e8dc',tc:'#8a4820', cats:['rice','protein','jp','west','chinese'], because:'วันนี้ขอ treat ตัวเองหน่อยแล้วกัน'},
+  {id:'healthy',  emoji:'😇',   label:'healthy วันนี้',    bg:'#e8f4ee',tc:'#2a6848', cats:['clean'],                               because:'ร่างกายต้องการอะไรดีๆ วันนี้'},
+  {id:'custom',   emoji:'🔍',   label:'เลือกเอง',          bg:'#eaecf2',tc:'#485870', cats:'custom',                                because:''},
+];
+
+const MENUS = [
+  {n:'กะเพราไก่',c:'rice'},{n:'กะเพราหมู',c:'rice'},{n:'กะเพรากุ้ง',c:'rice'},{n:'กะเพราเนื้อ',c:'rice'},
+  {n:'ผัดฉ่าหมู',c:'rice'},{n:'ผัดฉ่าทะเล',c:'rice'},{n:'ผัดพริกเผาไก่',c:'rice'},{n:'คั่วกลิ้งหมู',c:'rice'},
+  {n:'ผัดขิงไก่',c:'rice'},{n:'ผัดเม็ดมะม่วงไก่',c:'rice'},{n:'ผัดคะน้าหมูกรอบ',c:'rice'},
+  {n:'ผัดกระเทียมหมู',c:'rice'},{n:'ข้าวผัดกุ้ง',c:'rice'},{n:'ข้าวผัดนรก',c:'rice'},
+  {n:'ข้าวผัดต้มยำ',c:'rice'},{n:'ข้าวผัดขี้เมา',c:'rice'},{n:'ข้าวผัดสับปะรด',c:'rice'},
+  {n:'ข้าวมันไก่',c:'rice'},{n:'ข้าวหน้าเป็ด',c:'rice'},{n:'ข้าวหมูแดง',c:'rice'},
+  {n:'ข้าวหมูกรอบ',c:'rice'},{n:'ข้าวไก่กรอบ',c:'rice'},{n:'ข้าวแกงเขียวหวาน',c:'rice'},
+  {n:'ข้าวแกงมัสมั่น',c:'rice'},{n:'ข้าวไข่เจียว',c:'rice'},{n:'ฉู่ฉี่ปลา+ข้าว',c:'rice'},
+
+  {n:'ก๋วยเตี๋ยวน้ำใส',c:'noodle'},{n:'ก๋วยเตี๋ยวน้ำตก',c:'noodle'},{n:'ราดหน้าเส้นใหญ่',c:'noodle'},
+  {n:'ผัดไทยกุ้งสด',c:'noodle'},{n:'ผัดซีอิ๊วหมู',c:'noodle'},{n:'ผัดมาม่าทะเล',c:'noodle'},
+  {n:'บะหมี่แห้งหมูแดง',c:'noodle'},{n:'เย็นตาโฟ',c:'noodle'},{n:'ก๋วยจั๊บ',c:'noodle'},
+  {n:'ก๋วยเตี๋ยวต้มยำ',c:'noodle'},{n:'ผัดวุ้นเส้น',c:'noodle'},{n:'ข้าวซอย',c:'noodle'},
+
+  {n:'สเต็กไก่',c:'protein'},{n:'สเต็กหมู',c:'protein'},{n:'สเต็กเนื้อ',c:'protein'},
+  {n:'ไก่ย่าง',c:'protein'},{n:'หมูย่าง',c:'protein'},{n:'ปลาย่าง',c:'protein'},
+  {n:'ไก่ทอด',c:'protein'},{n:'หมูทอดกระเทียม',c:'protein'},{n:'ต้มข่าไก่',c:'protein'},
+  {n:'ต้มยำกุ้ง',c:'protein'},{n:'ลาบไก่',c:'protein'},{n:'น้ำตกหมู',c:'protein'},
+  {n:'หมูสะเต๊ะ',c:'protein'},{n:'ปีกไก่ทอด',c:'protein'},{n:'ซี่โครงหมูอบ',c:'protein'},
+
+  {n:'สลัดไก่ย่าง',c:'clean'},{n:'สลัดทูน่า',c:'clean'},{n:'สลัดแซลมอน',c:'clean'},
+  {n:'โบวล์ข้าวกล้อง',c:'clean'},{n:'อะโวคาโดโบวล์',c:'clean'},{n:'คีนัวโบวล์',c:'clean'},
+  {n:'สลัดผักรวม',c:'clean'},{n:'ไข่ต้มสลัด',c:'clean'},{n:'ซุปผักใส',c:'clean'},
+  {n:'ไก่นึ่งผัก',c:'clean'},{n:'ปลานึ่งมะนาว',c:'clean'},
+
+  {n:'ราเมนมิโซะ',c:'jp'},{n:'ราเมนต้มยำ',c:'jp'},{n:'อุด้งเย็น',c:'jp'},
+  {n:'ข้าวหน้าแซลมอน',c:'jp'},{n:'ข้าวไก่เทอริยากิ',c:'jp'},{n:'ซูชิรวม',c:'jp'},
+  {n:'บิบิมบับ',c:'jp'},{n:'ต็อกบกกี',c:'jp'},{n:'ซัมกยอปซัล',c:'jp'},
+  {n:'ไก่ทอดเกาหลี',c:'jp'},{n:'ดงคัตสึ',c:'jp'},{n:'ข้าวห่อสาหร่าย',c:'jp'},
+
+  {n:'เบอร์เกอร์ไก่',c:'west'},{n:'เบอร์เกอร์เนื้อ',c:'west'},{n:'พิซซ่า',c:'west'},
+  {n:'สปาเก็ตตี้โบโลเนส',c:'west'},{n:'พาสต้าครีม',c:'west'},{n:'แซนด์วิชไก่',c:'west'},
+  {n:'ชิคเก้นสเต็ก',c:'west'},{n:'ริบอายสเต็ก',c:'west'},{n:'คาโบนาร่า',c:'west'},
+
+  {n:'หม่าล่าหม้อไฟ',c:'chinese'},{n:'หม่าล่าเส้น',c:'chinese'},{n:'เกี๊ยวน้ำ',c:'chinese'},
+  {n:'เกี๊ยวซ่า',c:'chinese'},{n:'ติ่มซำรวม',c:'chinese'},{n:'ซาลาเปา',c:'chinese'},
+  {n:'เป็ดพะโล้+ข้าว',c:'chinese'},{n:'หมูพะโล้+ข้าว',c:'chinese'},{n:'โจ๊กหมู',c:'chinese'},
+  {n:'บะหมี่เกี๊ยวหมู',c:'chinese'},{n:'ผัดหมี่ฮ่องกง',c:'chinese'},{n:'กระเพาะปลา',c:'chinese'},
+  {n:'ข้าวมันเป็ด',c:'chinese'},{n:'หอยทอด',c:'chinese'},{n:'ข้าวต้มปลา',c:'chinese'},
+
+  {n:'ส้มตำไทย',c:'street'},{n:'ส้มตำปูปลาร้า',c:'street'},{n:'หมูปิ้ง+ข้าวเหนียว',c:'street'},
+  {n:'ไก่ทอดหาดใหญ่',c:'street'},{n:'ข้าวเหนียวไก่ทอด',c:'street'},{n:'ไส้กรอกอีสาน',c:'street'},
+  {n:'ทอดมันปลากราย',c:'street'},{n:'ขนมจีนน้ำยา',c:'street'},{n:'ลูกชิ้นทอด',c:'street'},
+  {n:'ไก่ย่างตะเกียง',c:'street'},{n:'ทาโกะยากิ',c:'street'},{n:'เฟรนช์ฟรายส์',c:'street'},
+  {n:'คอร์นด็อก',c:'street'},{n:'บาวเจี๊ยะ',c:'street'},
+
+  {n:'ไอศกรีม',c:'snack'},{n:'ชานมไข่มุก',c:'snack'},{n:'วาฟเฟิล',c:'snack'},
+  {n:'ทับทิมกรอบ',c:'snack'},{n:'มะม่วงข้าวเหนียว',c:'snack'},{n:'โรตีนมสด',c:'snack'},
+  {n:'ขนมครก',c:'snack'},{n:'บิงซูผลไม้',c:'snack'},{n:'ชีสเค้ก',c:'snack'},{n:'โดนัท',c:'snack'},
+];
+
+const VIBES = [
+  '😋 อร่อยแน่นอน','🔥 เด็ดมากกก','💯 วันนี้ชนะแล้ว',
+  '✨ universe เลือกให้','🎯 โดนใจสุดๆ','👑 เมนูของคนมีรสนิยม',
+  '🫶 ชีวิตดีขึ้นทันที','💪 พลังงานเต็มถัง','🏆 เมนู MVP วันนี้',
+  '🤌 เพอร์เฟ็กต์มาก','🤤 หิวขึ้นมาทันที','🎪 ไม่ผิดหวังแน่',
+  '🌙 คืนนี้นอนหลับสบาย','🌈 แบบนี้แหละชีวิตดี',
+];
+
+/* ═══════════════════════ STATE ═══════════════════════ */
+let activeMood = null;
+let activeCats = new Set(Object.keys(CAT));
+let history = [];
+let lastResult = null;
+let spinning = false;
+
+/* ═══════════════════════ FLOATERS ═══════════════════════ */
+const foods = ['🍱','🍳','🌶️','🥢','🍚','🧅','🫑','🥬','🐟','🦐','🍔','🍜','🍣','🥗','🥟','🛺','☁️'];
+const flEl = document.getElementById('floaters');
+for(let i = 0; i < 18; i++){
+  const d = document.createElement('div');
+  d.className = 'fl';
+  d.textContent = foods[i % foods.length];
+  d.style.left = (5 + Math.random() * 88) + 'vw';
+  d.style.fontSize = (.9 + Math.random() * 1.1) + 'rem';
+  const dur = 16 + Math.random() * 22;
+  d.style.animationDuration = dur + 's';
+  d.style.animationDelay = (-Math.random() * dur) + 's';
+  flEl.appendChild(d);
+}
+
+/* ═══════════════════════ MOOD CARDS ═══════════════════════ */
+const moodGrid = document.getElementById('moodGrid');
+MOODS.forEach(m => {
+  const card = document.createElement('div');
+  card.className = 'mood-card';
+  card.style.cssText = `background:${m.bg};border-color:${m.tc}30`;
+  card.innerHTML = `<span class="mood-emoji">${m.emoji}</span><span class="mood-lbl" style="color:${m.tc}">${m.label}</span>`;
+  card.onclick = () => selectMood(m.id);
+  card.dataset.id = m.id;
+  moodGrid.appendChild(card);
+});
+
+function selectMood(id){
+  activeMood = id;
+  document.querySelectorAll('.mood-card').forEach(c => {
+    const m = MOODS.find(x => x.id === c.dataset.id);
+    const on = c.dataset.id === id;
+    c.classList.toggle('selected', on);
+    c.style.borderColor = on ? m.tc : m.tc + '30';
+    c.style.transform = on ? 'scale(1.05)' : '';
+    c.style.boxShadow = on ? `0 4px 14px ${m.tc}35` : '';
+  });
+  const catSec = document.getElementById('catSection');
+  if(id === 'custom'){
+    catSec.classList.add('open');
+  } else {
+    catSec.classList.remove('open');
+    activeCats = new Set(Object.keys(CAT));
+  }
+  document.getElementById('spinBtn').classList.add('ready');
+}
+
+/* ═══════════════════════ CATEGORY TABS (เลือกเอง) ═══════════════════════ */
+const catGrid = document.getElementById('catGrid');
+Object.entries(CAT).forEach(([k, v]) => {
+  const b = document.createElement('button');
+  b.className = 'cat-tab';
+  b.dataset.cat = k;
+  b.style.cssText = `background:${v.bg};color:${v.tc};border-color:${v.tc}50`;
+  b.textContent = v.label;
+  b.onclick = () => {
+    if(activeCats.has(k) && activeCats.size > 1){ activeCats.delete(k); b.style.opacity = '.4'; }
+    else { activeCats.add(k); b.style.opacity = '1'; }
+  };
+  catGrid.appendChild(b);
+});
+
+/* ═══════════════════════ SPIN ═══════════════════════ */
+function pick(arr){ return arr[Math.floor(Math.random() * arr.length)] }
+
+function pool(){
+  const mood = MOODS.find(m => m.id === activeMood);
+  if(!mood) return MENUS;
+  if(mood.cats === 'all') return MENUS;
+  if(mood.cats === 'custom') return MENUS.filter(m => activeCats.has(m.c));
+  return MENUS.filter(m => mood.cats.includes(m.c));
+}
+
+function spin(){
+  if(spinning || !activeMood) return;
+  const p = pool();
+  if(!p.length) return;
+
+  spinning = true;
+  const btn = document.getElementById('spinBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ กำลังดูชะตา...';
+
+  if(lastResult){ history.unshift(lastResult); if(history.length > 2) history.pop(); }
+
+  const final = pick(p);
+  const vibe = pick(VIBES);
+  const mood = MOODS.find(m => m.id === activeMood);
+  const wrap = document.getElementById('resultWrap');
+  wrap.innerHTML = `<div class="rolling" id="rollText">กำลังเลือก...</div>`;
+
+  let ticks = 0, total = 18 + Math.floor(Math.random() * 10);
+  const iv = setInterval(() => {
+    ticks++;
+    const rt = document.getElementById('rollText');
+    if(!rt){ clearInterval(iv); return; }
+    if(ticks < total){
+      rt.textContent = pick(p).n;
+    } else {
+      clearInterval(iv);
+      lastResult = { ...final, vibe, moodId: activeMood };
+      showResult(final, vibe, mood);
+      spinning = false;
+      btn.disabled = false;
+      btn.textContent = '🎲 สุ่มอีกที!';
+      renderHist();
+      burst(ticks % 4 === 0 ? 65 : 20);
+    }
+  }, 55 + ticks * 2.8);
+}
+
+function showResult(item, vibe, mood){
+  const ci = CAT[item.c] || { bg:'#e8eef4', tc:'#4a7898' };
+  const because = mood?.because || '';
+  document.getElementById('resultWrap').innerHTML = `
+    <div class="result-bubble" style="background:${ci.bg};border:1.5px solid ${ci.tc}28">
+      <span class="r-badge" style="background:${ci.tc}">${CAT[item.c]?.label || ''}</span>
+      <div class="r-name" style="color:${ci.tc}">${item.n}</div>
+      ${because ? `<div class="r-because" style="color:${ci.tc}">เพราะ${because}</div>` : ''}
+      <div class="r-vibe" style="color:${ci.tc}">${vibe}</div>
+    </div>
+    <div class="act-row">
+      <button class="act-btn btn-again" onclick="spin()">🔄 สุ่มใหม่</button>
+      <button class="act-btn btn-ok" onclick="okTap()">✅ โอเค กินนี้!</button>
+    </div>`;
+}
+
+function okTap(){
+  const name = lastResult?.n || '';
+  document.getElementById('resultWrap').innerHTML = `
+    <div class="result-bubble" style="background:#e8f4ee;border:1.5px solid #3a684828">
+      <span class="r-badge" style="background:#3a6848">✅ ตัดสินใจแล้ว!</span>
+      <div class="r-name" style="color:#3a6848">${name}</div>
+      <div class="r-vibe" style="color:#3a6848">🎉 enjoy your meal!</div>
+    </div>
+    <div class="act-row">
+      <button class="act-btn btn-ok" onclick="spin()" style="flex:1">🎲 สุ่มใหม่รอบหน้า</button>
+    </div>`;
+  burst(85);
+}
+
+/* ═══════════════════════ HISTORY ═══════════════════════ */
+function renderHist(){
+  if(!history.length) return;
+  const sec = document.getElementById('histSec');
+  const list = document.getElementById('histList');
+  sec.style.display = 'block';
+  list.innerHTML = history.map(h => {
+    const ci = CAT[h.c] || { tc:'#aaa' };
+    return `<div class="hist-row">
+      <div class="hist-dot" style="background:${ci.tc}"></div>
+      <span>${h.n}</span>
+    </div>`;
+  }).join('');
+}
+
+/* ═══════════════════════ CONFETTI ═══════════════════════ */
+function burst(count){
+  const cv = document.getElementById('conf');
+  const ctx = cv.getContext('2d');
+  cv.width = innerWidth; cv.height = innerHeight;
+  const cols = ['#b8c8d8','#c8b0a8','#a8b8c8','#b0c8b8','#c0b0c8','#c8c0a0','#b8a8c0'];
+  const ps = [];
+  for(let i = 0; i < count; i++){
+    ps.push({
+      x: Math.random() * cv.width, y: -10,
+      w: 5 + Math.random() * 9, h: 3 + Math.random() * 6,
+      col: cols[Math.floor(Math.random() * cols.length)],
+      vx: (Math.random() - .5) * 5, vy: 2 + Math.random() * 5,
+      rot: Math.random() * 360, rv: (Math.random() - .5) * 8,
+      life: 1
+    });
+  }
+  let raf;
+  (function draw(){
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    let alive = false;
+    ps.forEach(p => {
+      p.x += p.vx; p.y += p.vy; p.rot += p.rv; p.vy += .13; p.life -= .012;
+      if(p.life > 0){
+        alive = true;
+        ctx.save(); ctx.globalAlpha = p.life;
+        ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+        ctx.fillStyle = p.col;
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        ctx.restore();
+      }
+    });
+    if(alive) raf = requestAnimationFrame(draw);
+    else { ctx.clearRect(0, 0, cv.width, cv.height); cancelAnimationFrame(raf); }
+  })();
+}
+</script>
+</body>
+</html>
