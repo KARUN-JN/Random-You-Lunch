@@ -68,17 +68,23 @@ body::before{
 /* MOOD GRID */
 .mood-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1.4rem}
 .mood-card{
-  border-radius:14px;padding:10px 8px;
+  border-radius:14px;padding:10px 6px;
   border:2px solid transparent;
   cursor:pointer;text-align:center;
   transition:transform .2s cubic-bezier(.34,1.56,.64,1),box-shadow .2s;
   user-select:none;
+  height:72px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
 }
 .mood-card:hover{transform:translateY(-2px) scale(1.04)}
 .mood-card:active{transform:scale(.97)}
 .mood-card.selected{box-shadow:0 4px 14px rgba(0,0,0,.12)}
-.mood-emoji{font-size:1.6rem;line-height:1;display:block;margin-bottom:4px}
-.mood-lbl{font-size:.72rem;font-weight:700;line-height:1.3}
+.mood-emoji{font-size:1.25rem;line-height:1;display:block;flex-shrink:0}
+.mood-lbl{
+  font-size:.76rem;font-weight:800;line-height:1.25;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  width:100%;letter-spacing:-.01em;
+}
 
 /* CAT GRID (เลือกเอง) */
 .cat-section{overflow:hidden;max-height:0;transition:max-height .35s ease,opacity .3s ease;opacity:0}
@@ -209,64 +215,130 @@ const CAT = {
 CAT.jp.tc = '#604088';
 
 const MOODS = [
-  {id:'starving', emoji:'😵‍💫', label:'หิวมาก ตาลายแล้ว', bg:'#f5ece6',tc:'#9a4828', cats:['rice','noodle','protein','street','chinese'], because:'ท้องว่างมาแต่เช้า ต้องอิ่มหนำ'},
-  {id:'normal',   emoji:'😁',   label:'หิวปกติ กินได้ทุกเมนู', bg:'#e6eef5',tc:'#305878', cats:'all',                               because:'ไม่มีเงื่อนไข ชะตาตัดสินให้เลย'},
-  {id:'light',    emoji:'🥱',   label:'ไม่ค่อยหิว',        bg:'#e8f2ec',tc:'#3a6848', cats:['clean','snack','street'],              because:'ท้องยังอิ่มนิดๆ เอาเบาๆ ก่อน'},
-  {id:'crave',    emoji:'🤤',   label:'อยากของอร่อย',      bg:'#f0e8dc',tc:'#8a4820', cats:['rice','protein','jp','west','chinese'], because:'วันนี้ขอ treat ตัวเองหน่อยแล้วกัน'},
-  {id:'healthy',  emoji:'😇',   label:'healthy วันนี้',    bg:'#e8f4ee',tc:'#2a6848', cats:['clean'],                               because:'ร่างกายต้องการอะไรดีๆ วันนี้'},
-  {id:'custom',   emoji:'🔍',   label:'เลือกเอง',          bg:'#eaecf2',tc:'#485870', cats:'custom',                                because:''},
+  {id:'starving', emoji:'😵‍💫', label:'หิวมาก ตาลายแล้ว',    bg:'#f7b2a9',tc:'#8a2a20', cats:['rice','noodle','protein','street','chinese'], because:'ท้องว่างมาแต่เช้า ต้องอิ่มหนำ'},
+  {id:'normal',   emoji:'😁',   label:'หิวปกติ กินได้ทุกเมนู',bg:'#d8f1f1',tc:'#1a6060', cats:'all',                                          because:'ไม่มีเงื่อนไข ชะตาตัดสินให้เลย'},
+  {id:'light',    emoji:'🥱',   label:'ไม่ค่อยหิว เอาเบาๆ',  bg:'#d3ecdc',tc:'#286040', cats:['clean','street'],                              because:'ท้องยังอิ่มนิดๆ เอาเบาคาวก่อน'},
+  {id:'sugar',    emoji:'🫠',   label:'น้ำตาลตก ของหวานด่วน',bg:'#efe5ee',tc:'#6a3080', cats:['snack'],                                       because:'ร่างกายกำลังร้องขอน้ำตาลอย่างเร่งด่วน'},
+  {id:'crave',    emoji:'🤤',   label:'อยากของอร่อย',         bg:'#fddfd6',tc:'#8a4020', cats:['rice','protein','jp','west','chinese'],         because:'วันนี้ขอ treat ตัวเองหน่อยแล้วกัน'},
+  {id:'healthy',  emoji:'😇',   label:'healthy วันนี้',       bg:'#c6e0e0',tc:'#1a5858', cats:['clean'],                                        because:'ร่างกายต้องการอะไรดีๆ วันนี้'},
+  {id:'custom',   emoji:'🔍',   label:'เลือกเอง',             bg:'#fcfad9',tc:'#6a5a00', cats:'custom',                                          because:''},
 ];
 
 const MENUS = [
+  // RICE
   {n:'กะเพราไก่',c:'rice'},{n:'กะเพราหมู',c:'rice'},{n:'กะเพรากุ้ง',c:'rice'},{n:'กะเพราเนื้อ',c:'rice'},
-  {n:'ผัดฉ่าหมู',c:'rice'},{n:'ผัดฉ่าทะเล',c:'rice'},{n:'ผัดพริกเผาไก่',c:'rice'},{n:'คั่วกลิ้งหมู',c:'rice'},
-  {n:'ผัดขิงไก่',c:'rice'},{n:'ผัดเม็ดมะม่วงไก่',c:'rice'},{n:'ผัดคะน้าหมูกรอบ',c:'rice'},
-  {n:'ผัดกระเทียมหมู',c:'rice'},{n:'ข้าวผัดกุ้ง',c:'rice'},{n:'ข้าวผัดนรก',c:'rice'},
-  {n:'ข้าวผัดต้มยำ',c:'rice'},{n:'ข้าวผัดขี้เมา',c:'rice'},{n:'ข้าวผัดสับปะรด',c:'rice'},
+  {n:'กะเพราหมูกรอบ',c:'rice'},{n:'ผัดฉ่าหมู',c:'rice'},{n:'ผัดฉ่าทะเล',c:'rice'},
+  {n:'ผัดพริกเผาไก่',c:'rice'},{n:'ผัดพริกเผากุ้ง',c:'rice'},{n:'คั่วกลิ้งหมู',c:'rice'},
+  {n:'ผัดขิงไก่',c:'rice'},{n:'ผัดเม็ดมะม่วงไก่',c:'rice'},{n:'ผัดพริกไทยดำเนื้อ',c:'rice'},
+  {n:'ผัดคะน้าหมูกรอบ',c:'rice'},{n:'ผัดกะปิ',c:'rice'},{n:'ผัดกระเทียมหมู',c:'rice'},
+  {n:'ผัดพริกแกงป่า',c:'rice'},{n:'ผัดไข่เค็มไก่',c:'rice'},{n:'ผัดซอสหมู',c:'rice'},
+  {n:'ตะไคร้ไก่',c:'rice'},{n:'มะนาวไก่',c:'rice'},{n:'ฉู่ฉี่ปลา+ข้าว',c:'rice'},
+  {n:'ข้าวผัดกุ้ง',c:'rice'},{n:'ข้าวผัดปู',c:'rice'},{n:'ข้าวผัดนรก',c:'rice'},
+  {n:'ข้าวผัดต้มยำ',c:'rice'},{n:'ข้าวผัดขี้เมา',c:'rice'},{n:'ข้าวผัดผงกะหรี่',c:'rice'},
+  {n:'ข้าวผัดสับปะรด',c:'rice'},{n:'ข้าวผัดหม้อดิน',c:'rice'},
   {n:'ข้าวมันไก่',c:'rice'},{n:'ข้าวหน้าเป็ด',c:'rice'},{n:'ข้าวหมูแดง',c:'rice'},
-  {n:'ข้าวหมูกรอบ',c:'rice'},{n:'ข้าวไก่กรอบ',c:'rice'},{n:'ข้าวแกงเขียวหวาน',c:'rice'},
-  {n:'ข้าวแกงมัสมั่น',c:'rice'},{n:'ข้าวไข่เจียว',c:'rice'},{n:'ฉู่ฉี่ปลา+ข้าว',c:'rice'},
+  {n:'ข้าวหมูกรอบ',c:'rice'},{n:'ข้าวไก่กรอบ',c:'rice'},{n:'ข้าวหน้าเนื้อ',c:'rice'},
+  {n:'ข้าวหน้าปลาทอด',c:'rice'},{n:'ข้าวแกงเขียวหวาน',c:'rice'},{n:'ข้าวแกงมัสมั่น',c:'rice'},
+  {n:'ข้าวแกงพะแนง',c:'rice'},{n:'ข้าวแกงกะหรี่ญี่ปุ่น',c:'rice'},{n:'ข้าวไข่เจียว',c:'rice'},
 
-  {n:'ก๋วยเตี๋ยวน้ำใส',c:'noodle'},{n:'ก๋วยเตี๋ยวน้ำตก',c:'noodle'},{n:'ราดหน้าเส้นใหญ่',c:'noodle'},
-  {n:'ผัดไทยกุ้งสด',c:'noodle'},{n:'ผัดซีอิ๊วหมู',c:'noodle'},{n:'ผัดมาม่าทะเล',c:'noodle'},
-  {n:'บะหมี่แห้งหมูแดง',c:'noodle'},{n:'เย็นตาโฟ',c:'noodle'},{n:'ก๋วยจั๊บ',c:'noodle'},
-  {n:'ก๋วยเตี๋ยวต้มยำ',c:'noodle'},{n:'ผัดวุ้นเส้น',c:'noodle'},{n:'ข้าวซอย',c:'noodle'},
+  // NOODLE
+  {n:'ก๋วยเตี๋ยวน้ำใส',c:'noodle'},{n:'ก๋วยเตี๋ยวน้ำตก',c:'noodle'},{n:'ก๋วยเตี๋ยวต้มยำ',c:'noodle'},
+  {n:'ก๋วยเตี๋ยวหลอด',c:'noodle'},{n:'ก๋วยจั๊บ',c:'noodle'},{n:'ก๋วยเตี๋ยวคั่วไก่',c:'noodle'},
+  {n:'ราดหน้าเส้นใหญ่',c:'noodle'},{n:'ผัดไทยกุ้งสด',c:'noodle'},{n:'ผัดไทยไข่',c:'noodle'},
+  {n:'ผัดซีอิ๊วหมู',c:'noodle'},{n:'ผัดมาม่าทะเล',c:'noodle'},{n:'ผัดหมี่โคราช',c:'noodle'},
+  {n:'ผัดหมี่สิงคโปร์',c:'noodle'},{n:'บะหมี่แห้งหมูแดง',c:'noodle'},{n:'บะหมี่ต้มยำ',c:'noodle'},
+  {n:'เย็นตาโฟ',c:'noodle'},{n:'สุกี้น้ำ',c:'noodle'},{n:'สุกี้แห้ง',c:'noodle'},
+  {n:'ข้าวซอย',c:'noodle'},{n:'ลาบก้อน',c:'noodle'},{n:'ผัดวุ้นเส้น',c:'noodle'},
 
+  // PROTEIN
   {n:'สเต็กไก่',c:'protein'},{n:'สเต็กหมู',c:'protein'},{n:'สเต็กเนื้อ',c:'protein'},
   {n:'ไก่ย่าง',c:'protein'},{n:'หมูย่าง',c:'protein'},{n:'ปลาย่าง',c:'protein'},
-  {n:'ไก่ทอด',c:'protein'},{n:'หมูทอดกระเทียม',c:'protein'},{n:'ต้มข่าไก่',c:'protein'},
-  {n:'ต้มยำกุ้ง',c:'protein'},{n:'ลาบไก่',c:'protein'},{n:'น้ำตกหมู',c:'protein'},
-  {n:'หมูสะเต๊ะ',c:'protein'},{n:'ปีกไก่ทอด',c:'protein'},{n:'ซี่โครงหมูอบ',c:'protein'},
+  {n:'กุ้งย่าง',c:'protein'},{n:'ไก่ทอด',c:'protein'},{n:'ปีกไก่ทอด',c:'protein'},
+  {n:'หมูทอดกระเทียม',c:'protein'},{n:'ต้มข่าไก่',c:'protein'},{n:'ต้มยำกุ้ง',c:'protein'},
+  {n:'ต้มแซบซี่โครง',c:'protein'},{n:'แกงส้มปลา',c:'protein'},{n:'แกงป่าไก่',c:'protein'},
+  {n:'ลาบไก่',c:'protein'},{n:'ลาบเป็ด',c:'protein'},{n:'น้ำตกหมู',c:'protein'},
+  {n:'ยำรวมมิตร',c:'protein'},{n:'ยำวุ้นเส้น',c:'protein'},{n:'หมูสะเต๊ะ',c:'protein'},
+  {n:'ซี่โครงหมูอบ',c:'protein'},{n:'กุ้งอบวุ้นเส้น',c:'protein'},{n:'ปลาทอดน้ำปลา',c:'protein'},
+  {n:'เนื้อย่างซีอิ๊ว',c:'protein'},{n:'ไก่ผัดเม็ดมะม่วง',c:'protein'},
 
+  // CLEAN
   {n:'สลัดไก่ย่าง',c:'clean'},{n:'สลัดทูน่า',c:'clean'},{n:'สลัดแซลมอน',c:'clean'},
+  {n:'สลัดผักรวม',c:'clean'},{n:'สลัดผลไม้',c:'clean'},{n:'ไข่ต้มสลัด',c:'clean'},
   {n:'โบวล์ข้าวกล้อง',c:'clean'},{n:'อะโวคาโดโบวล์',c:'clean'},{n:'คีนัวโบวล์',c:'clean'},
-  {n:'สลัดผักรวม',c:'clean'},{n:'ไข่ต้มสลัด',c:'clean'},{n:'ซุปผักใส',c:'clean'},
-  {n:'ไก่นึ่งผัก',c:'clean'},{n:'ปลานึ่งมะนาว',c:'clean'},
+  {n:'สมูทตี้โบวล์',c:'clean'},{n:'ซุปผักใส',c:'clean'},{n:'ซุปมิโซะ',c:'clean'},
+  {n:'ไก่นึ่งผัก',c:'clean'},{n:'ปลานึ่งมะนาว',c:'clean'},{n:'แซลมอนนึ่ง',c:'clean'},
+  {n:'อะโวคาโดโทสต์',c:'clean'},{n:'ไข่ดาวผักโขม',c:'clean'},{n:'ข้าวกล้องหน้าไก่อบ',c:'clean'},
+  {n:'โอ๊ตมีลผลไม้',c:'clean'},{n:'กรีกโยเกิร์ต',c:'clean'},{n:'ข้าวต้มผักใส',c:'clean'},
 
-  {n:'ราเมนมิโซะ',c:'jp'},{n:'ราเมนต้มยำ',c:'jp'},{n:'อุด้งเย็น',c:'jp'},
-  {n:'ข้าวหน้าแซลมอน',c:'jp'},{n:'ข้าวไก่เทอริยากิ',c:'jp'},{n:'ซูชิรวม',c:'jp'},
+  // JP / KOREAN
+  {n:'ราเมนมิโซะ',c:'jp'},{n:'ราเมนต้มยำ',c:'jp'},{n:'ราเมนชาชู',c:'jp'},{n:'ราเมนซุปกระดูก',c:'jp'},
+  {n:'อุด้งเย็น',c:'jp'},{n:'โซบะเย็น',c:'jp'},{n:'ยากิโซบะ',c:'jp'},{n:'ฮิยาชิชูกะ',c:'jp'},
+  {n:'ข้าวหน้าแซลมอน',c:'jp'},{n:'ข้าวไก่เทอริยากิ',c:'jp'},{n:'ข้าวหน้าเนื้อ Gyudon',c:'jp'},
+  {n:'ซูชิรวม',c:'jp'},{n:'ซาชิมิ',c:'jp'},{n:'ดงคัตสึ',c:'jp'},{n:'ไก่คาราอาเกะ',c:'jp'},
+  {n:'โอโคโนมิยากิ',c:'jp'},{n:'ข้าวห่อสาหร่าย',c:'jp'},
   {n:'บิบิมบับ',c:'jp'},{n:'ต็อกบกกี',c:'jp'},{n:'ซัมกยอปซัล',c:'jp'},
-  {n:'ไก่ทอดเกาหลี',c:'jp'},{n:'ดงคัตสึ',c:'jp'},{n:'ข้าวห่อสาหร่าย',c:'jp'},
+  {n:'ไก่ทอดเกาหลี',c:'jp'},{n:'ซุนดูบู',c:'jp'},{n:'ข้าวหน้าหมูกิมจิ',c:'jp'},
 
-  {n:'เบอร์เกอร์ไก่',c:'west'},{n:'เบอร์เกอร์เนื้อ',c:'west'},{n:'พิซซ่า',c:'west'},
-  {n:'สปาเก็ตตี้โบโลเนส',c:'west'},{n:'พาสต้าครีม',c:'west'},{n:'แซนด์วิชไก่',c:'west'},
-  {n:'ชิคเก้นสเต็ก',c:'west'},{n:'ริบอายสเต็ก',c:'west'},{n:'คาโบนาร่า',c:'west'},
+  // WESTERN
+  {n:'เบอร์เกอร์ไก่',c:'west'},{n:'เบอร์เกอร์เนื้อ',c:'west'},{n:'ชีสเบอร์เกอร์ดับเบิ้ล',c:'west'},
+  {n:'พิซซ่า',c:'west'},{n:'สปาเก็ตตี้โบโลเนส',c:'west'},{n:'พาสต้าครีม',c:'west'},
+  {n:'คาโบนาร่า',c:'west'},{n:'ชิกเก้นอัลเฟรโด',c:'west'},{n:'ลาซาญ่า',c:'west'},
+  {n:'แซนด์วิชไก่',c:'west'},{n:'BLT แซนด์วิช',c:'west'},{n:'ฮอทด็อก',c:'west'},
+  {n:'ทาโก้ไก่',c:'west'},{n:'บูร์ริโต้',c:'west'},{n:'ฟิชแอนด์ชิปส์',c:'west'},
+  {n:'ชิคเก้นสเต็ก',c:'west'},{n:'ริบอายสเต็ก',c:'west'},{n:'สเต็กแซลมอน',c:'west'},
+  {n:'ซีซาร์สลัด',c:'west'},{n:'ชิกเก้นพาร์ม',c:'west'},
 
-  {n:'หม่าล่าหม้อไฟ',c:'chinese'},{n:'หม่าล่าเส้น',c:'chinese'},{n:'เกี๊ยวน้ำ',c:'chinese'},
-  {n:'เกี๊ยวซ่า',c:'chinese'},{n:'ติ่มซำรวม',c:'chinese'},{n:'ซาลาเปา',c:'chinese'},
-  {n:'เป็ดพะโล้+ข้าว',c:'chinese'},{n:'หมูพะโล้+ข้าว',c:'chinese'},{n:'โจ๊กหมู',c:'chinese'},
-  {n:'บะหมี่เกี๊ยวหมู',c:'chinese'},{n:'ผัดหมี่ฮ่องกง',c:'chinese'},{n:'กระเพาะปลา',c:'chinese'},
-  {n:'ข้าวมันเป็ด',c:'chinese'},{n:'หอยทอด',c:'chinese'},{n:'ข้าวต้มปลา',c:'chinese'},
+  // CHINESE
+  {n:'หม่าล่าหม้อไฟ',c:'chinese'},{n:'หม่าล่าเส้น',c:'chinese'},{n:'หม่าล่าไก่',c:'chinese'},
+  {n:'เกี๊ยวน้ำ',c:'chinese'},{n:'เกี๊ยวซ่า',c:'chinese'},{n:'ติ่มซำรวม',c:'chinese'},
+  {n:'ซาลาเปา',c:'chinese'},{n:'ปอเปี๊ยะทอด',c:'chinese'},{n:'ลูกชิ้นหมูทอด',c:'chinese'},
+  {n:'เป็ดพะโล้+ข้าว',c:'chinese'},{n:'หมูพะโล้+ข้าว',c:'chinese'},{n:'ไข่พะโล้',c:'chinese'},
+  {n:'โจ๊กหมู',c:'chinese'},{n:'โจ๊กทะเล',c:'chinese'},{n:'ข้าวต้มปลา',c:'chinese'},
+  {n:'บะหมี่เกี๊ยวหมู',c:'chinese'},{n:'ผัดหมี่ฮ่องกง',c:'chinese'},{n:'ผัดหมี่ XO',c:'chinese'},
+  {n:'กระเพาะปลา',c:'chinese'},{n:'เต้าหู้ทรงเครื่อง',c:'chinese'},{n:'กุ้งซอสมะเขือเทศ',c:'chinese'},
+  {n:'ข้าวมันเป็ด',c:'chinese'},{n:'หอยทอด',c:'chinese'},{n:'น้ำเต้าหู้+ปาท่องโก๋',c:'chinese'},
+  {n:'แป๊ะซะปลา',c:'chinese'},{n:'ซุปเปาฮื้อ',c:'chinese'},
 
-  {n:'ส้มตำไทย',c:'street'},{n:'ส้มตำปูปลาร้า',c:'street'},{n:'หมูปิ้ง+ข้าวเหนียว',c:'street'},
-  {n:'ไก่ทอดหาดใหญ่',c:'street'},{n:'ข้าวเหนียวไก่ทอด',c:'street'},{n:'ไส้กรอกอีสาน',c:'street'},
-  {n:'ทอดมันปลากราย',c:'street'},{n:'ขนมจีนน้ำยา',c:'street'},{n:'ลูกชิ้นทอด',c:'street'},
-  {n:'ไก่ย่างตะเกียง',c:'street'},{n:'ทาโกะยากิ',c:'street'},{n:'เฟรนช์ฟรายส์',c:'street'},
-  {n:'คอร์นด็อก',c:'street'},{n:'บาวเจี๊ยะ',c:'street'},
+  // STREET FOOD
+  {n:'ส้มตำไทย',c:'street'},{n:'ส้มตำปูปลาร้า',c:'street'},{n:'ส้มตำซีฟู้ด',c:'street'},
+  {n:'หมูปิ้ง+ข้าวเหนียว',c:'street'},{n:'ไก่ย่างตะเกียง',c:'street'},{n:'ไก่ทอดหาดใหญ่',c:'street'},
+  {n:'ข้าวเหนียวไก่ทอด',c:'street'},{n:'ไส้กรอกอีสาน',c:'street'},{n:'ทอดมันปลากราย',c:'street'},
+  {n:'ขนมจีนน้ำยา',c:'street'},{n:'ขนมจีนน้ำพริก',c:'street'},{n:'ลูกชิ้นทอด',c:'street'},
+  {n:'ลูกชิ้นยืนกิน',c:'street'},{n:'สาเกทอด',c:'street'},{n:'ปลาหมึกย่าง',c:'street'},
+  {n:'หอยแมลงภู่อบ',c:'street'},{n:'ทาโกะยากิ',c:'street'},{n:'บาวเจี๊ยะ',c:'street'},
+  {n:'ข้าวเกรียบปากหม้อ',c:'street'},{n:'แหนมเนือง',c:'street'},{n:'โรตีกล้วย',c:'street'},
+  {n:'ขนมปังปิ้งสังขยา',c:'street'},{n:'เฟรนช์ฟรายส์',c:'street'},{n:'คอร์นด็อก',c:'street'},
+  {n:'ไก่ทอดเกาหลีสตรีท',c:'street'},{n:'ข้าวโพดคั่วเนย',c:'street'},
 
-  {n:'ไอศกรีม',c:'snack'},{n:'ชานมไข่มุก',c:'snack'},{n:'วาฟเฟิล',c:'snack'},
-  {n:'ทับทิมกรอบ',c:'snack'},{n:'มะม่วงข้าวเหนียว',c:'snack'},{n:'โรตีนมสด',c:'snack'},
-  {n:'ขนมครก',c:'snack'},{n:'บิงซูผลไม้',c:'snack'},{n:'ชีสเค้ก',c:'snack'},{n:'โดนัท',c:'snack'},
+  // SNACK / DESSERT / DRINKS (น้ำตาลตก)
+  {n:'ชานมไข่มุก',c:'snack'},{n:'ชาไทยเย็น',c:'snack'},{n:'ชาเย็น',c:'snack'},
+  {n:'กาแฟเย็น',c:'snack'},{n:'โกโก้เย็น',c:'snack'},{n:'นมสดเย็น',c:'snack'},
+  {n:'มิลค์เชค',c:'snack'},{n:'น้ำผลไม้สด',c:'snack'},{n:'สมูทตี้',c:'snack'},
+  {n:'ไอศกรีม',c:'snack'},{n:'บิงซูผลไม้',c:'snack'},{n:'ทับทิมกรอบ',c:'snack'},
+  {n:'มะม่วงข้าวเหนียว',c:'snack'},{n:'ข้าวเหนียวมูน',c:'snack'},{n:'โรตีนมสด',c:'snack'},
+  {n:'ขนมครก',c:'snack'},{n:'วาฟเฟิล',c:'snack'},{n:'แพนเค้ก',c:'snack'},
+  {n:'ฝอยทอง',c:'snack'},{n:'ทองหยิบทองหยอด',c:'snack'},{n:'บราวนี่',c:'snack'},
+  {n:'ชีสเค้ก',c:'snack'},{n:'เค้กช็อกโกแลต',c:'snack'},{n:'ทาร์ตไข่',c:'snack'},
+  {n:'มาการอง',c:'snack'},{n:'โดนัท',c:'snack'},{n:'ครัวซองต์',c:'snack'},
+  {n:'พุดดิ้งคาราเมล',c:'snack'},{n:'ไอติมกะทิ',c:'snack'},{n:'เจลาโต้',c:'snack'},
+];
+
+const QUOTES = [
+  '"กินข้าวแล้วค่อยคิด"',
+  '"ท้องอิ่มแล้วทุกอย่างก็ไหว"',
+  '"วันนี้จะผ่านไปได้ ขอให้กินก่อน"',
+  '"ไม่มีปัญหาที่แก้ไม่ได้ด้วยอาหารอร่อย"',
+  '"กินอะไรก็ได้ ขอให้มีความสุข"',
+  '"อาหารดี ชีวิตดี ไม่ต้องอธิบาย"',
+  '"วันนี้เธอสมควรได้กินของอร่อย"',
+  '"พักและกิน นั่นคือทุกอย่าง"',
+  '"กินให้อร่อย ใช้ชีวิตให้สนุก"',
+  '"ทุกมื้ออาหารคือโอกาสใหม่"',
+  '"อาหารที่ดีที่สุดคืออาหารที่ตัวเองเลือก"',
+  '"อย่าคิดมาก กินก่อน"',
+  '"ชีวิตสั้น กินให้อร่อย"',
+  '"มื้อนี้เพื่อตัวเอง"',
+  '"ความสุขเล็กๆ เริ่มที่จานข้าว"',
 ];
 
 const VIBES = [
@@ -279,7 +351,7 @@ const VIBES = [
 
 /* ═══════════════════════ STATE ═══════════════════════ */
 let activeMood = null;
-let activeCats = new Set(Object.keys(CAT));
+let activeCats = new Set();
 let history = [];
 let lastResult = null;
 let spinning = false;
@@ -323,10 +395,11 @@ function selectMood(id){
   });
   const catSec = document.getElementById('catSection');
   if(id === 'custom'){
+    activeCats = new Set();
+    document.querySelectorAll('.cat-tab').forEach(b => { b.style.opacity = '.35'; b.classList.remove('cat-on'); });
     catSec.classList.add('open');
   } else {
     catSec.classList.remove('open');
-    activeCats = new Set(Object.keys(CAT));
   }
   document.getElementById('spinBtn').classList.add('ready');
 }
@@ -339,9 +412,19 @@ Object.entries(CAT).forEach(([k, v]) => {
   b.dataset.cat = k;
   b.style.cssText = `background:${v.bg};color:${v.tc};border-color:${v.tc}50`;
   b.textContent = v.label;
+  b.style.opacity = '.35';
   b.onclick = () => {
-    if(activeCats.has(k) && activeCats.size > 1){ activeCats.delete(k); b.style.opacity = '.4'; }
-    else { activeCats.add(k); b.style.opacity = '1'; }
+    if(activeCats.has(k)){
+      activeCats.delete(k);
+      b.style.opacity = '.35';
+      b.classList.remove('cat-on');
+    } else {
+      activeCats.add(k);
+      b.style.opacity = '1';
+      b.classList.add('cat-on');
+    }
+    const spinBtn = document.getElementById('spinBtn');
+    spinBtn.classList.toggle('ready', activeCats.size > 0);
   };
   catGrid.appendChild(b);
 });
@@ -371,6 +454,7 @@ function spin(){
 
   const final = pick(p);
   const vibe = pick(VIBES);
+  const quote = pick(QUOTES);
   const mood = MOODS.find(m => m.id === activeMood);
   const wrap = document.getElementById('resultWrap');
   wrap.innerHTML = `<div class="rolling" id="rollText">กำลังเลือก...</div>`;
@@ -384,8 +468,8 @@ function spin(){
       rt.textContent = pick(p).n;
     } else {
       clearInterval(iv);
-      lastResult = { ...final, vibe, moodId: activeMood };
-      showResult(final, vibe, mood);
+      lastResult = { ...final, vibe, quote, moodId: activeMood };
+      showResult(final, vibe, quote, mood);
       spinning = false;
       btn.disabled = false;
       btn.textContent = '🎲 สุ่มอีกที!';
@@ -395,7 +479,7 @@ function spin(){
   }, 55 + ticks * 2.8);
 }
 
-function showResult(item, vibe, mood){
+function showResult(item, vibe, quote, mood){
   const ci = CAT[item.c] || { bg:'#e8eef4', tc:'#4a7898' };
   const because = mood?.because || '';
   document.getElementById('resultWrap').innerHTML = `
@@ -404,6 +488,7 @@ function showResult(item, vibe, mood){
       <div class="r-name" style="color:${ci.tc}">${item.n}</div>
       ${because ? `<div class="r-because" style="color:${ci.tc}">เพราะ${because}</div>` : ''}
       <div class="r-vibe" style="color:${ci.tc}">${vibe}</div>
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid ${ci.tc}18;font-size:.78rem;font-style:italic;color:${ci.tc};opacity:.6">${quote}</div>
     </div>
     <div class="act-row">
       <button class="act-btn btn-again" onclick="spin()">🔄 สุ่มใหม่</button>
