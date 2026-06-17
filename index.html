@@ -3,308 +3,779 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>สุ่มอาหาร</title>
+<title>สุ่มอาหาร 🎰</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Sarabun:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
 
-  body {
-    font-family: 'Sarabun', 'Segoe UI', sans-serif;
-    background: #FFF8F0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 32px 16px;
-    color: #2D2D2D;
-  }
+:root {
+  --gold:        #C9A84C;
+  --gold-light:  #F0D080;
+  --gold-dark:   #8B6914;
+  --gold-dim:    rgba(201,168,76,0.15);
+  --bg:          #05050a;
+  --surface:     #0d0b12;
+  --surface2:    #130f1a;
+  --border:      rgba(201,168,76,0.22);
+  --text:        #e8dcc8;
+  --text-dim:    #6b5f4a;
+  --red:         #8B0000;
+  --red-mid:     #A82020;
+  --red-bright:  #C0392B;
+  --red-dim:     rgba(160,20,20,0.18);
+}
 
-  h1 {
-    font-size: 1.6rem;
-    font-weight: 700;
-    color: #C0392B;
-    margin-bottom: 4px;
-    text-align: center;
-  }
+body {
+  font-family: 'Sarabun', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 36px 16px 64px;
+  color: var(--text);
+  background-image:
+    radial-gradient(ellipse at 50% 0%,   rgba(201,168,76,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse at 0%   60%, rgba(139,0,0,0.08)    0%, transparent 45%),
+    radial-gradient(ellipse at 100% 80%, rgba(139,0,0,0.06)    0%, transparent 40%),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(201,168,76,0.012) 40px,
+      rgba(201,168,76,0.012) 41px
+    );
+}
 
-  .subtitle {
-    font-size: 0.9rem;
-    color: #888;
-    margin-bottom: 28px;
-  }
+/* ── HEADER ── */
+.header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.header-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.header-line {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold));
+}
+.header-line.r { background: linear-gradient(to left, transparent, var(--gold)); }
+.header-diamond {
+  width: 8px; height: 8px;
+  background: var(--red-bright);
+  transform: rotate(45deg);
+  box-shadow: 0 0 8px rgba(192,57,43,0.6);
+}
+h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.75rem;
+  font-weight: 700;
+  background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.12em;
+  margin-bottom: 4px;
+}
+.tagline {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
 
-  .card {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    padding: 28px 24px;
-    width: 100%;
-    max-width: 480px;
-    margin-bottom: 20px;
-  }
+/* ── PANEL ── */
+.panel {
+  width: 100%;
+  max-width: 520px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 20px 18px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20px; right: 20px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
 
-  .section-label {
-    font-size: 0.8rem;
-    font-weight: 700;
-    color: #999;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
+.filter-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  color: var(--gold-dark);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.filter-row { margin-bottom: 16px; }
+.filter-row:last-child { margin-bottom: 0; }
 
-  /* Filter chips */
-  .chips {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip {
+  padding: 5px 14px;
+  border-radius: 0;
+  border: 1px solid rgba(201,168,76,0.2);
+  background: transparent;
+  color: var(--text-dim);
+  font-family: 'Sarabun', sans-serif;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  letter-spacing: 0.04em;
+  clip-path: polygon(6px 0%, calc(100% - 6px) 0%, 100% 50%, calc(100% - 6px) 100%, 6px 100%, 0% 50%);
+  padding: 6px 18px;
+}
+.chip:hover {
+  border-color: var(--gold);
+  color: var(--gold-light);
+  background: var(--gold-dim);
+}
+.chip.active {
+  background: linear-gradient(135deg, #6B0000, #A82020, #6B0000);
+  border-color: rgba(192,57,43,0.7);
+  color: #ffd0c8;
+  font-weight: 700;
+  box-shadow: 0 0 10px rgba(139,0,0,0.4);
+}
 
-  .chip {
-    padding: 7px 16px;
-    border-radius: 999px;
-    border: 2px solid #E0E0E0;
-    background: white;
-    font-size: 0.9rem;
-    cursor: pointer;
-    transition: all 0.15s;
-    user-select: none;
-  }
+/* ── SLOT MACHINE ── */
+.machine-wrap {
+  width: 100%;
+  max-width: 520px;
+  margin-bottom: 10px;
+}
 
-  .chip:hover { border-color: #C0392B; color: #C0392B; }
-  .chip.active { background: #C0392B; border-color: #C0392B; color: white; font-weight: 600; }
+.machine-frame {
+  background: linear-gradient(160deg, #150505, #2a0a08, #1a0505, #2a1200, #150505);
+  border: 1px solid var(--gold-dark);
+  border-radius: 4px;
+  padding: 5px;
+  box-shadow:
+    0 0 0 1px rgba(201,168,76,0.08),
+    0 12px 50px rgba(0,0,0,0.8),
+    0 0 40px rgba(139,0,0,0.12),
+    inset 0 1px 0 rgba(201,168,76,0.15);
+  position: relative;
+}
 
-  /* Spin button */
-  .btn-spin {
-    width: 100%;
-    max-width: 480px;
-    padding: 18px;
-    border-radius: 16px;
-    background: #C0392B;
-    color: white;
-    font-size: 1.15rem;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    letter-spacing: 0.02em;
-    transition: transform 0.1s, background 0.15s;
-    box-shadow: 0 4px 14px rgba(192,57,43,0.35);
-  }
+/* corner ornaments */
+.machine-frame::before,
+.machine-frame::after {
+  content: '✦';
+  position: absolute;
+  color: var(--gold-dark);
+  font-size: 0.7rem;
+  top: 8px;
+}
+.machine-frame::before { left: 10px; }
+.machine-frame::after  { right: 10px; }
 
-  .btn-spin:hover { background: #A93226; }
-  .btn-spin:active { transform: scale(0.97); }
-  .btn-spin:disabled { background: #CCC; box-shadow: none; cursor: not-allowed; }
+.machine-inner {
+  background: radial-gradient(ellipse at 50% 100%, rgba(100,0,0,0.15) 0%, #080508 60%);
+  border-radius: 2px;
+  padding: 22px 14px 20px;
+  border: 1px solid rgba(201,168,76,0.08);
+}
 
-  /* Result */
-  .result-card {
-    background: white;
-    border-radius: 20px;
-    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-    padding: 32px 24px;
-    width: 100%;
-    max-width: 480px;
-    text-align: center;
-    margin-top: 20px;
-    display: none;
-  }
+/* reel column labels */
+.reel-labels {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  padding: 0 2px;
+}
+.reel-label {
+  flex: 1;
+  text-align: center;
+  font-family: 'Cinzel', serif;
+  font-size: 0.58rem;
+  color: var(--gold-dark);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
 
-  .result-card.show { display: block; }
+/* reels */
+.reels {
+  display: flex;
+  gap: 6px;
+  position: relative;
+}
 
-  .result-label { font-size: 0.85rem; color: #999; margin-bottom: 8px; }
+.reel-outer {
+  flex: 1;
+  height: 228px;
+  overflow: hidden;
+  background: #020102;
+  border: 1px solid rgba(201,168,76,0.18);
+  position: relative;
+}
 
-  .result-menu {
-    font-size: 2rem;
-    font-weight: 800;
-    color: #C0392B;
-    margin-bottom: 6px;
-    animation: pop 0.3s ease;
-  }
+/* velvet-like top/bottom fade */
+.reel-outer::before,
+.reel-outer::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  height: 68px;
+  z-index: 3;
+  pointer-events: none;
+}
+.reel-outer::before {
+  top: 0;
+  background: linear-gradient(to bottom, rgba(2,1,2,0.95) 0%, transparent 100%);
+}
+.reel-outer::after {
+  bottom: 0;
+  background: linear-gradient(to top, rgba(2,1,2,0.95) 0%, transparent 100%);
+}
 
-  .result-meat {
-    font-size: 1.1rem;
-    color: #555;
-    margin-bottom: 16px;
-  }
+/* win line */
+.win-line {
+  position: absolute;
+  top: 76px; left: 0; right: 0;
+  height: 76px;
+  border-top: 1px solid rgba(192,57,43,0.5);
+  border-bottom: 1px solid rgba(192,57,43,0.5);
+  background: linear-gradient(to bottom,
+    rgba(139,0,0,0.06),
+    rgba(139,0,0,0.12),
+    rgba(139,0,0,0.06)
+  );
+  z-index: 2;
+  pointer-events: none;
+}
 
-  .result-badge {
-    display: inline-block;
-    background: #FFF0EE;
-    color: #C0392B;
-    border-radius: 999px;
-    padding: 5px 16px;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
+.reel-strip {
+  position: absolute;
+  left: 0; right: 0;
+  top: 0;
+  will-change: transform;
+}
 
-  @keyframes pop {
-    0% { transform: scale(0.85); opacity: 0; }
-    60% { transform: scale(1.07); }
-    100% { transform: scale(1); opacity: 1; }
-  }
+.reel-item {
+  height: 76px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 4px 6px;
+}
+.reel-emoji { font-size: 1.5rem; line-height: 1; filter: saturate(0.7); }
+.reel-name {
+  font-family: 'Sarabun', sans-serif;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #5a4a30;
+  text-align: center;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
+}
 
-  .divider { height: 1px; background: #F0F0F0; margin: 20px 0; }
+/* divider between reels */
+.reel-divider {
+  width: 1px;
+  background: linear-gradient(to bottom, transparent, var(--gold-dark), transparent);
+  align-self: stretch;
+}
 
-  /* History */
-  .history { display: flex; flex-direction: column; gap: 8px; margin-top: 4px; }
+/* SPIN BUTTON */
+.spin-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 20px;
+}
 
-  .history-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px 14px;
-    background: #FAFAFA;
-    border-radius: 10px;
-    font-size: 0.9rem;
-    color: #444;
-  }
+.spin-btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  color: #fff0f0;
+  background: linear-gradient(160deg, #6B0000, #A82020, #C0392B, #A82020, #6B0000);
+  background-size: 200% 200%;
+  border: 1px solid rgba(201,168,76,0.4);
+  padding: 13px 36px;
+  cursor: pointer;
+  transition: all 0.2s;
+  clip-path: polygon(12px 0%, calc(100% - 12px) 0%, 100% 50%, calc(100% - 12px) 100%, 12px 100%, 0% 50%);
+  box-shadow:
+    0 4px 20px rgba(139,0,0,0.5),
+    0 0 0 1px rgba(201,168,76,0.15),
+    inset 0 1px 0 rgba(255,150,150,0.15);
+  animation: shimmerRed 3s ease infinite;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+}
+@keyframes shimmerRed {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+.spin-btn:hover {
+  box-shadow: 0 4px 32px rgba(192,57,43,0.65), 0 0 0 1px rgba(201,168,76,0.3);
+  transform: scale(1.03);
+}
+.spin-btn:active { transform: scale(0.97); }
+.spin-btn:disabled {
+  background: #1a1010;
+  color: #3a2020;
+  border-color: transparent;
+  box-shadow: none;
+  animation: none;
+  cursor: not-allowed;
+  transform: none;
+}
 
-  .history-item .menu-name { font-weight: 600; }
-  .history-item .meat-tag {
-    font-size: 0.8rem;
-    color: #888;
-    background: #F0F0F0;
-    padding: 3px 10px;
-    border-radius: 999px;
-  }
+/* ── RESULT ── */
+.result-panel {
+  width: 100%;
+  max-width: 520px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 22px 18px;
+  margin-bottom: 10px;
+  text-align: center;
+  display: none;
+  position: relative;
+}
+.result-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20px; right: 20px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+.result-panel.show { display: block; }
 
-  .empty-history { text-align: center; color: #BBB; font-size: 0.9rem; padding: 12px 0; }
+.result-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: 0.6rem;
+  color: var(--gold-dark);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+.result-text {
+  font-size: 1.35rem;
+  font-weight: 700;
+  background: linear-gradient(180deg, var(--gold-light), var(--gold));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 14px;
+  line-height: 1.4;
+}
+
+.result-sep {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 14px 0;
+}
+.result-sep-line { flex: 1; height: 1px; background: var(--border); }
+.result-sep-diamond { width: 5px; height: 5px; background: var(--red-bright); transform: rotate(45deg); box-shadow: 0 0 6px rgba(192,57,43,0.5); }
+
+.result-tags { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; }
+.tag {
+  display: inline-block;
+  padding: 4px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  border: 1px solid;
+}
+.tag-clean   { color: #4CAF50; border-color: rgba(76,175,80,0.3); background: rgba(76,175,80,0.07); }
+.tag-notclean{ color: #e74c3c; border-color: rgba(231,76,60,0.3); background: rgba(231,76,60,0.07); }
+.tag-spicy   { color: var(--gold); border-color: rgba(201,168,76,0.3); background: var(--gold-dim); }
+
+/* WIN FLASH */
+@keyframes winGlow {
+  0%,100% { box-shadow: 0 12px 50px rgba(0,0,0,0.8), 0 0 40px rgba(139,0,0,0.12); }
+  33%      { box-shadow: 0 0 0 2px rgba(192,57,43,0.8), 0 0 50px rgba(192,57,43,0.3), 0 12px 50px rgba(0,0,0,0.8); }
+  66%      { box-shadow: 0 0 0 2px rgba(201,168,76,0.8), 0 0 50px rgba(201,168,76,0.25), 0 12px 50px rgba(0,0,0,0.8); }
+}
+.machine-frame.win { animation: winGlow 0.6s ease 3; }
+
+/* ── HISTORY ── */
+.history-panel {
+  width: 100%;
+  max-width: 520px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 18px 18px;
+  position: relative;
+}
+.history-panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 20px; right: 20px;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--gold), transparent);
+}
+.hist-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.62rem;
+  color: var(--gold-dark);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.hist-list { display: flex; flex-direction: column; gap: 6px; }
+.h-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(201,168,76,0.03);
+  border: 1px solid rgba(201,168,76,0.08);
+  padding: 10px 13px;
+  font-size: 0.86rem;
+}
+.h-name { font-weight: 700; color: var(--text); }
+.h-sub  { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
+.h-base {
+  font-size: 0.75rem;
+  color: var(--gold-dark);
+  border: 1px solid rgba(201,168,76,0.2);
+  padding: 3px 10px;
+  letter-spacing: 0.04em;
+}
+.h-empty { text-align: center; color: #2a2010; font-size: 0.85rem; padding: 10px 0; }
+
+/* reel spinning state — dim non-center items more */
+.reel-outer.spinning .reel-name { color: #2a1c0a; }
 </style>
 </head>
 <body>
 
-<h1>🎲 สุ่มอาหารวันนี้</h1>
-
-<!-- Filter Section -->
-<div class="card">
-  <div class="section-label">🥩 กรองเนื้อสัตว์</div>
-  <div class="chips" id="meatFilter">
-    <div class="chip active" data-value="all">ทั้งหมด</div>
-    <div class="chip" data-value="ไก่">ไก่</div>
-    <div class="chip" data-value="หมู">หมู</div>
-    <div class="chip" data-value="กุ้ง">กุ้ง</div>
-    <div class="chip" data-value="เนื้อ">เนื้อ</div>
-    <div class="chip" data-value="ปลา">ปลา</div>
-    <div class="chip" data-value="เต้าหู้">เต้าหู้ 🌱</div>
+<!-- HEADER -->
+<div class="header">
+  <div class="header-ornament">
+    <div class="header-line"></div>
+    <div class="header-diamond"></div>
+    <div class="header-line r"></div>
   </div>
+  <h1>FORTUNE MENU</h1>
+  <p class="tagline">Spin · Discover · Dine</p>
+</div>
 
-  <div class="divider"></div>
-
-  <div class="section-label">🍳 กรองประเภทเมนู</div>
-  <div class="chips" id="typeFilter">
-    <div class="chip active" data-value="all">ทั้งหมด</div>
-    <div class="chip" data-value="ผัด">ผัด</div>
-    <div class="chip" data-value="ข้าวผัด">ข้าวผัด</div>
-    <div class="chip" data-value="other">อื่นๆ</div>
+<!-- FILTERS -->
+<div class="panel">
+  <div class="filter-row">
+    <div class="filter-label">— Protein —</div>
+    <div class="chips" id="meatFilter">
+      <div class="chip active" data-value="all">All</div>
+      <div class="chip" data-value="0">ไก่ 🍗</div>
+      <div class="chip" data-value="1">หมู 🥩</div>
+      <div class="chip" data-value="2">กุ้ง 🦐</div>
+      <div class="chip" data-value="3">เนื้อ</div>
+      <div class="chip" data-value="4">ปลา 🐟</div>
+      <div class="chip" data-value="5">เต้าหู้ 🌱</div>
+    </div>
+  </div>
+  <div class="filter-row">
+    <div class="filter-label">— Base —</div>
+    <div class="chips" id="baseFilter">
+      <div class="chip active" data-value="all">Fortune's Choice</div>
+      <div class="chip" data-value="0">ข้าวหอม</div>
+      <div class="chip" data-value="1">ข้าวกล้อง 🌾</div>
+      <div class="chip" data-value="2">เส้นหมี่</div>
+      <div class="chip" data-value="3">เส้นเล็ก</div>
+      <div class="chip" data-value="4">เส้นใหญ่</div>
+      <div class="chip" data-value="5">บะหมี่</div>
+      <div class="chip" data-value="6">มาม่า 🍜</div>
+    </div>
+  </div>
+  <div class="filter-row">
+    <div class="filter-label">— Style —</div>
+    <div class="chips" id="cleanFilter">
+      <div class="chip active" data-value="all">All Styles</div>
+      <div class="chip" data-value="clean">Clean 🥗</div>
+      <div class="chip" data-value="notclean">Indulge 🔥</div>
+    </div>
+  </div>
+  <div class="filter-row">
+    <div class="filter-label">— Intensity —</div>
+    <div class="chips" id="spicyFilter">
+      <div class="chip active" data-value="all">Any</div>
+      <div class="chip" data-value="1">Mild 😌</div>
+      <div class="chip" data-value="2">Medium 😤</div>
+      <div class="chip" data-value="3">Intense 🔥🔥</div>
+    </div>
   </div>
 </div>
 
-<button class="btn-spin" onclick="spin()">🎲 สุ่มเมนู!</button>
+<!-- SLOT MACHINE -->
+<div class="machine-wrap">
+  <div class="machine-frame" id="machineFrame">
+    <div class="machine-inner">
+      <div class="reel-labels">
+        <div class="reel-label">Protein</div>
+        <div class="reel-label">Method</div>
+        <div class="reel-label">Base</div>
+      </div>
+      <div class="reels">
+        <div class="reel-outer" id="reel0"><div class="win-line"></div><div class="reel-strip" id="strip0"></div></div>
+        <div class="reel-outer" id="reel1"><div class="win-line"></div><div class="reel-strip" id="strip1"></div></div>
+        <div class="reel-outer" id="reel2"><div class="win-line"></div><div class="reel-strip" id="strip2"></div></div>
+      </div>
+      <div class="spin-row">
+        <button class="spin-btn" id="spinBtn" onclick="spin()">✦ SPIN ✦</button>
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- Result -->
-<div class="result-card" id="resultCard">
-  <div class="result-label">เมนูของคุณวันนี้คือ...</div>
-  <div class="result-menu" id="resultMenu"></div>
-  <div class="result-meat" id="resultMeat"></div>
+<!-- RESULT -->
+<div class="result-panel" id="resultPanel">
+  <div class="result-eyebrow">✦ Your Fortune ✦</div>
+  <div class="result-text" id="resultText"></div>
+  <div class="result-sep">
+    <div class="result-sep-line"></div>
+    <div class="result-sep-diamond"></div>
+    <div class="result-sep-line"></div>
+  </div>
+  <div class="result-tags" id="resultTags"></div>
+</div>
 
-  <div class="divider"></div>
-  <div class="section-label" style="text-align:left">ประวัติการสุ่ม</div>
-  <div class="history" id="history">
-    <div class="empty-history" id="emptyHistory">ยังไม่มีประวัติ</div>
+<!-- HISTORY -->
+<div class="history-panel">
+  <div class="hist-label">✦ Recent Spins ✦</div>
+  <div class="hist-list" id="historyList">
+    <div class="h-empty" id="historyEmpty">— No spins yet —</div>
   </div>
 </div>
 
 <script>
-const menus = [
-  "กะเพรา","ผัดฉ่า","ผัดพริกเผา","คั่วกลิ้ง","ผัดขิง",
-  "ผัดเม็ดมะม่วง","ผัดพริกไทยดำ","ผัดพริกขิงถั่วฝักยาว","ผัดกะปิ","ผัดพริกแกงป่า",
-  "ผัดซอส","ผัดไข่เค็ม","ข้าวผัด","ข้าวผัดน้ำพริกเผา","ข้าวผัดต้มยำ",
-  "ข้าวผัดขี้เมา","ข้าวผัดผงกะหรี่","ข้าวผัดนรก","ข้าวผัดแกงเขียวหวาน","ผัดคะน้า",
-  "ผัดผักรวมมิตร","ผัดวุ้นเส้น","ผัดกระเทียม","คั่วพริกเกลือ","ตะไคร้",
-  "มะนาว","ผัดผงกะหรี่","เทอริยากิ","ผัดหนำเลี๊ยบ","ฉู่ฉี่"
+const MEATS = [
+  { name:"ไก่",    emoji:"🍗" },
+  { name:"หมู",    emoji:"🥩" },
+  { name:"กุ้ง",   emoji:"🦐" },
+  { name:"เนื้อ",  emoji:"🥩" },
+  { name:"ปลา",    emoji:"🐟" },
+  { name:"เต้าหู้",emoji:"🌱" },
 ];
 
-const meats = ["ไก่","หมู","กุ้ง","เนื้อ","ปลา","เต้าหู้"];
-const meatEmojis = { "ไก่":"🍗", "หมู":"🥩", "กุ้ง":"🦐", "เนื้อ":"🥩", "ปลา":"🐟", "เต้าหู้":"🌱" };
+const METHODS = [
+  { name:"กะเพรา",           emoji:"🌿", clean:false, spicy:3 },
+  { name:"ผัดฉ่า",           emoji:"🔥", clean:false, spicy:3 },
+  { name:"ผัดพริกเผา",       emoji:"🌶️", clean:false, spicy:2 },
+  { name:"คั่วกลิ้ง",        emoji:"🌶️", clean:false, spicy:3 },
+  { name:"ผัดขิง",           emoji:"🫚", clean:true,  spicy:1 },
+  { name:"ผัดเม็ดมะม่วง",    emoji:"🥜", clean:true,  spicy:1 },
+  { name:"ผัดพริกไทยดำ",     emoji:"⚫", clean:false, spicy:2 },
+  { name:"ผัดพริกขิง",       emoji:"🌶️", clean:false, spicy:2 },
+  { name:"ผัดกะปิ",          emoji:"🦐", clean:false, spicy:2 },
+  { name:"ผัดแกงป่า",        emoji:"🌿", clean:false, spicy:3 },
+  { name:"ผัดซอส",           emoji:"🫙", clean:false, spicy:2 },
+  { name:"ผัดไข่เค็ม",       emoji:"🥚", clean:false, spicy:2 },
+  { name:"ข้าวผัด",          emoji:"🍳", clean:false, spicy:1 },
+  { name:"ข้าวผัดน้ำพริกเผา",emoji:"🍳", clean:false, spicy:2 },
+  { name:"ข้าวผัดต้มยำ",     emoji:"🍳", clean:false, spicy:2 },
+  { name:"ข้าวผัดขี้เมา",    emoji:"🍳", clean:false, spicy:3 },
+  { name:"ข้าวผัดกะหรี่",    emoji:"🍛", clean:false, spicy:1 },
+  { name:"ข้าวผัดนรก",       emoji:"💀", clean:false, spicy:3 },
+  { name:"ข้าวผัดแกงเขียวหวาน",emoji:"🍛",clean:false,spicy:2 },
+  { name:"ผัดคะน้า",         emoji:"🥦", clean:true,  spicy:1 },
+  { name:"ผัดผักรวม",        emoji:"🥗", clean:true,  spicy:1 },
+  { name:"ผัดวุ้นเส้น",      emoji:"🍜", clean:true,  spicy:1 },
+  { name:"ผัดกระเทียม",      emoji:"🧄", clean:true,  spicy:1 },
+  { name:"คั่วพริกเกลือ",    emoji:"🧂", clean:false, spicy:2 },
+  { name:"ตะไคร้",           emoji:"🌿", clean:true,  spicy:2 },
+  { name:"มะนาว",            emoji:"🍋", clean:true,  spicy:2 },
+  { name:"ผัดกะหรี่",        emoji:"🍛", clean:false, spicy:1 },
+  { name:"เทอริยากิ",        emoji:"🍱", clean:true,  spicy:1 },
+  { name:"ผัดหนำเลี๊ยบ",    emoji:"🫙", clean:false, spicy:2 },
+  { name:"ฉู่ฉี่",           emoji:"🌶️", clean:false, spicy:2 },
+];
 
-let selectedMeat = "all";
-let selectedType = "all";
-let history = [];
+const BASES = [
+  { name:"ข้าวหอม",  emoji:"🍚" },
+  { name:"ข้าวกล้อง",emoji:"🌾" },
+  { name:"เส้นหมี่", emoji:"🍜" },
+  { name:"เส้นเล็ก", emoji:"🍜" },
+  { name:"เส้นใหญ่", emoji:"🍜" },
+  { name:"บะหมี่",   emoji:"🍝" },
+  { name:"มาม่า",    emoji:"🍜" },
+];
 
-// Chip toggle logic
-document.getElementById('meatFilter').addEventListener('click', e => {
-  if (!e.target.classList.contains('chip')) return;
-  document.querySelectorAll('#meatFilter .chip').forEach(c => c.classList.remove('active'));
-  e.target.classList.add('active');
-  selectedMeat = e.target.dataset.value;
-});
+const SPICY_LABEL = { 1:"Mild 😌", 2:"Medium 😤", 3:"Intense 🔥🔥" };
+const SPICY_COLOR = { 1:"#4CAF50", 2:"#f39c12", 3:"#e74c3c" };
 
-document.getElementById('typeFilter').addEventListener('click', e => {
-  if (!e.target.classList.contains('chip')) return;
-  document.querySelectorAll('#typeFilter .chip').forEach(c => c.classList.remove('active'));
-  e.target.classList.add('active');
-  selectedType = e.target.dataset.value;
-});
+let filters = { meat:"all", base:"all", clean:"all", spicy:"all" };
 
-function filterMenus() {
-  return menus.filter(m => {
-    if (selectedType === 'ผัด') return m.startsWith('ผัด') || m.startsWith('คั่ว') || m.startsWith('ตะไคร้') || m.startsWith('มะนาว') || m.startsWith('เทอริยากิ') || m.startsWith('ฉู่ฉี่');
-    if (selectedType === 'ข้าวผัด') return m.startsWith('ข้าว');
-    if (selectedType === 'other') return !m.startsWith('ผัด') && !m.startsWith('ข้าว') && !m.startsWith('คั่ว');
+function bindChips(id, key) {
+  document.getElementById(id).addEventListener('click', e => {
+    const chip = e.target.closest('.chip');
+    if (!chip) return;
+    document.querySelectorAll(`#${id} .chip`).forEach(c => c.classList.remove('active'));
+    chip.classList.add('active');
+    filters[key] = chip.dataset.value;
+  });
+}
+bindChips('meatFilter','meat');
+bindChips('baseFilter','base');
+bindChips('cleanFilter','clean');
+bindChips('spicyFilter','spicy');
+
+function getMethodPool() {
+  return METHODS.filter(m => {
+    if (filters.clean === 'clean' && !m.clean) return false;
+    if (filters.clean === 'notclean' && m.clean) return false;
+    if (filters.spicy !== 'all' && m.spicy !== parseInt(filters.spicy)) return false;
     return true;
   });
 }
+function getMeatPool()  { return filters.meat === 'all' ? MEATS : [MEATS[parseInt(filters.meat)]]; }
+function getBasePool()  { return filters.base === 'all' ? BASES : [BASES[parseInt(filters.base)]]; }
+function pick(arr)      { return arr[Math.floor(Math.random() * arr.length)]; }
 
-function filterMeats() {
-  if (selectedMeat === 'all') return meats;
-  return [selectedMeat];
+// ── REEL ──
+const ITEM_H = 76;
+const LOOPS  = 6;
+
+class Reel {
+  constructor(stripEl, items) {
+    this.strip = stripEl;
+    this.spinning = false;
+    this.build(items);
+  }
+  build(items) {
+    this.items = items;
+    const rep = [];
+    for (let i = 0; i < LOOPS; i++) rep.push(...items);
+    this.rep = rep;
+    this.strip.innerHTML = rep.map(it =>
+      `<div class="reel-item"><div class="reel-emoji">${it.emoji}</div><div class="reel-name">${it.name}</div></div>`
+    ).join('');
+    this.pos = items.length;
+    this._setY(false);
+  }
+  _getY()  { return -(this.pos * ITEM_H) + ITEM_H; }
+  _setY(smooth) {
+    this.strip.style.transition = smooth ? 'transform 0.42s cubic-bezier(0.17, 0.67, 0.12, 1)' : 'none';
+    this.strip.style.transform  = `translateY(${this._getY()}px)`;
+  }
+  startSpin(ms) {
+    this.spinning = true;
+    this._step(ms);
+  }
+  _step(ms) {
+    if (!this.spinning) return;
+    this.pos++;
+    if (this.pos >= this.items.length * (LOOPS - 1)) this.pos = this.items.length;
+    this._setY(false);
+    this._t = setTimeout(() => this._step(ms), ms);
+  }
+  stopAt(finalIdx, onDone) {
+    this.spinning = false;
+    clearTimeout(this._t);
+    let target = -1;
+    for (let i = this.pos + 1; i < this.rep.length; i++) {
+      if (this.rep[i] === this.items[finalIdx]) { target = i; break; }
+    }
+    if (target === -1) target = this.items.length * 3 + finalIdx;
+    this.pos = target;
+    this._setY(true);
+    if (onDone) setTimeout(onDone, 450);
+  }
 }
 
+let reels = [];
+function initReels(mp, mep, bp) {
+  reels = [
+    new Reel(document.getElementById('strip0'), mp),
+    new Reel(document.getElementById('strip1'), mep),
+    new Reel(document.getElementById('strip2'), bp),
+  ];
+}
+initReels(MEATS, METHODS, BASES);
+
+let isSpinning = false;
+let history = [];
+
 function spin() {
-  const filteredMenus = filterMenus();
-  const filteredMeats = filterMeats();
+  if (isSpinning) return;
+  const mp  = getMeatPool();
+  const mep = getMethodPool();
+  const bp  = getBasePool();
+  if (mep.length === 0) { alert('ไม่มีเมนูตรงกับตัวเลือก ลองปรับ filter ใหม่ครับ'); return; }
 
-  if (filteredMenus.length === 0) {
-    alert('ไม่มีเมนูในหมวดที่เลือก กรุณาเปลี่ยน filter');
-    return;
-  }
+  const fm = pick(mp), fme = pick(mep), fb = pick(bp);
 
-  const menu = filteredMenus[Math.floor(Math.random() * filteredMenus.length)];
-  const meat = filteredMeats[Math.floor(Math.random() * filteredMeats.length)];
-  const full = menu + meat;
+  isSpinning = true;
+  document.getElementById('spinBtn').disabled = true;
+  document.getElementById('resultPanel').classList.remove('show');
 
-  // Show result
-  document.getElementById('resultMenu').textContent = full;
-  document.getElementById('resultMeat').textContent = meatEmojis[meat] + ' ' + meat;
-  document.getElementById('resultCard').classList.add('show');
+  reels[0].build(mp);
+  reels[1].build(mep);
+  reels[2].build(bp);
 
-  // Trigger re-animation
-  const el = document.getElementById('resultMenu');
-  el.style.animation = 'none';
-  el.offsetHeight; // reflow
-  el.style.animation = '';
+  reels[0].startSpin(58);
+  reels[1].startSpin(54);
+  reels[2].startSpin(62);
 
-  // Add to history
-  history.unshift({ menu, meat });
+  setTimeout(() => {
+    reels[0].stopAt(mp.indexOf(fm), () => {
+      setTimeout(() => {
+        reels[1].stopAt(mep.indexOf(fme), () => {
+          setTimeout(() => {
+            reels[2].stopAt(bp.indexOf(fb), () => {
+              showResult(fm, fme, fb);
+              isSpinning = false;
+              document.getElementById('spinBtn').disabled = false;
+              const f = document.getElementById('machineFrame');
+              f.classList.add('win');
+              setTimeout(() => f.classList.remove('win'), 1600);
+            });
+          }, 640);
+        });
+      }, 640);
+    });
+  }, 1500);
+}
+
+function showResult(meat, method, base) {
+  document.getElementById('resultText').textContent =
+    `${method.emoji} ${method.name}${meat.name}  ✦  ${base.emoji} ${base.name}`;
+  document.getElementById('resultTags').innerHTML = `
+    <span class="tag ${method.clean?'tag-clean':'tag-notclean'}">${method.clean?'🥗 Clean':'🔥 Indulge'}</span>
+    <span class="tag tag-spicy" style="color:${SPICY_COLOR[method.spicy]};border-color:${SPICY_COLOR[method.spicy]}33">${SPICY_LABEL[method.spicy]}</span>
+  `;
+  document.getElementById('resultPanel').classList.add('show');
+
+  history.unshift({ meat, method, base });
   if (history.length > 5) history.pop();
   renderHistory();
 }
 
 function renderHistory() {
-  const container = document.getElementById('history');
-  const empty = document.getElementById('emptyHistory');
-
-  if (history.length === 0) {
-    empty.style.display = 'block';
-    return;
-  }
-  empty.style.display = 'none';
-
-  // Remove old history items (keep emptyHistory)
-  container.querySelectorAll('.history-item').forEach(el => el.remove());
-
+  const list = document.getElementById('historyList');
+  list.querySelectorAll('.h-item').forEach(el => el.remove());
+  document.getElementById('historyEmpty').style.display = history.length ? 'none' : 'block';
   history.forEach(h => {
-    const div = document.createElement('div');
-    div.className = 'history-item';
-    div.innerHTML = `<span class="menu-name">${h.menu}${h.meat}</span><span class="meat-tag">${meatEmojis[h.meat]} ${h.meat}</span>`;
-    container.appendChild(div);
+    const d = document.createElement('div');
+    d.className = 'h-item';
+    d.innerHTML = `
+      <div>
+        <div class="h-name">${h.method.emoji} ${h.method.name}${h.meat.name}</div>
+        <div class="h-sub">${h.method.clean?'Clean':'Indulge'} · ${SPICY_LABEL[h.method.spicy]}</div>
+      </div>
+      <span class="h-base">${h.base.emoji} ${h.base.name}</span>`;
+    list.appendChild(d);
   });
 }
 </script>
