@@ -9,20 +9,20 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --gold:        #C9A84C;
-  --gold-light:  #F0D080;
+  --gold:        #B8922A;
+  --gold-light:  #D4A83C;
   --gold-dark:   #8B6914;
-  --gold-dim:    rgba(201,168,76,0.15);
-  --bg:          #05050a;
-  --surface:     #0d0b12;
-  --surface2:    #130f1a;
-  --border:      rgba(201,168,76,0.22);
-  --text:        #e8dcc8;
-  --text-dim:    #6b5f4a;
+  --gold-dim:    rgba(184,146,42,0.12);
+  --bg:          #F5EDD5;
+  --surface:     #FFFDF5;
+  --surface2:    #FDF6E3;
+  --border:      rgba(160,120,30,0.2);
+  --text:        #1E1206;
+  --text-dim:    #8A7050;
   --red:         #8B0000;
   --red-mid:     #A82020;
   --red-bright:  #C0392B;
-  --red-dim:     rgba(160,20,20,0.18);
+  --red-dim:     rgba(160,20,20,0.1);
 }
 
 body {
@@ -35,15 +35,15 @@ body {
   padding: 36px 16px 64px;
   color: var(--text);
   background-image:
-    radial-gradient(ellipse at 50% 0%,   rgba(201,168,76,0.07) 0%, transparent 55%),
-    radial-gradient(ellipse at 0%   60%, rgba(139,0,0,0.08)    0%, transparent 45%),
-    radial-gradient(ellipse at 100% 80%, rgba(139,0,0,0.06)    0%, transparent 40%),
+    radial-gradient(ellipse at 50% 0%,   rgba(192,57,43,0.06)  0%, transparent 50%),
+    radial-gradient(ellipse at 0%   80%, rgba(184,146,42,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 30%, rgba(192,57,43,0.04)  0%, transparent 45%),
     repeating-linear-gradient(
       45deg,
       transparent,
       transparent 40px,
-      rgba(201,168,76,0.012) 40px,
-      rgba(201,168,76,0.012) 41px
+      rgba(160,120,30,0.04) 40px,
+      rgba(160,120,30,0.04) 41px
     );
 }
 
@@ -62,9 +62,9 @@ body {
 .header-line {
   width: 60px;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--gold));
+  background: linear-gradient(to right, transparent, var(--gold-dark));
 }
-.header-line.r { background: linear-gradient(to left, transparent, var(--gold)); }
+.header-line.r { background: linear-gradient(to left, transparent, var(--gold-dark)); }
 .header-diamond {
   width: 8px; height: 8px;
   background: var(--red-bright);
@@ -75,7 +75,7 @@ h1 {
   font-family: 'Cinzel', serif;
   font-size: 1.75rem;
   font-weight: 700;
-  background: linear-gradient(180deg, var(--gold-light) 0%, var(--gold) 50%, var(--gold-dark) 100%);
+  background: linear-gradient(180deg, #8B0000 0%, #C0392B 45%, #8B0000 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -84,7 +84,7 @@ h1 {
 }
 .tagline {
   font-size: 0.75rem;
-  color: var(--text-dim);
+  color: #A07050;
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
@@ -94,24 +94,25 @@ h1 {
   width: 100%;
   max-width: 520px;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(160,120,30,0.25);
   border-radius: 4px;
   padding: 20px 18px;
   margin-bottom: 10px;
   position: relative;
+  box-shadow: 0 2px 16px rgba(100,60,0,0.08);
 }
 .panel::before {
   content: '';
   position: absolute;
   top: 0; left: 20px; right: 20px;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  background: linear-gradient(to right, transparent, var(--gold-dark), transparent);
 }
 
 .filter-label {
   font-family: 'Cinzel', serif;
-  font-size: 0.62rem;
-  color: var(--gold-dark);
+  font-size: 0.68rem;
+  color: var(--gold);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   margin-bottom: 10px;
@@ -121,13 +122,11 @@ h1 {
 
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip {
-  padding: 5px 14px;
-  border-radius: 0;
-  border: 1px solid rgba(201,168,76,0.2);
+  border: 1px solid rgba(160,120,30,0.3);
   background: transparent;
-  color: var(--text-dim);
+  color: #6A4A18;
   font-family: 'Sarabun', sans-serif;
-  font-size: 0.82rem;
+  font-size: 0.88rem;
   cursor: pointer;
   transition: all 0.15s;
   user-select: none;
@@ -136,16 +135,16 @@ h1 {
   padding: 6px 18px;
 }
 .chip:hover {
-  border-color: var(--gold);
-  color: var(--gold-light);
-  background: var(--gold-dim);
+  border-color: var(--red-bright);
+  color: var(--red-bright);
+  background: var(--red-dim);
 }
 .chip.active {
   background: linear-gradient(135deg, #6B0000, #A82020, #6B0000);
-  border-color: rgba(192,57,43,0.7);
-  color: #ffd0c8;
+  border-color: rgba(192,57,43,0.6);
+  color: #FFE0D8;
   font-weight: 700;
-  box-shadow: 0 0 10px rgba(139,0,0,0.4);
+  box-shadow: 0 2px 12px rgba(139,0,0,0.25);
 }
 
 /* ── SLOT MACHINE ── */
@@ -181,10 +180,10 @@ h1 {
 .machine-frame::after  { right: 10px; }
 
 .machine-inner {
-  background: radial-gradient(ellipse at 50% 100%, rgba(100,0,0,0.15) 0%, #080508 60%);
+  background: #FFFDF5;
   border-radius: 2px;
   padding: 22px 14px 20px;
-  border: 1px solid rgba(201,168,76,0.08);
+  border: 1px solid rgba(201,168,76,0.2);
 }
 
 /* reel column labels */
@@ -213,10 +212,10 @@ h1 {
 
 .reel-outer {
   flex: 1;
-  height: 228px;
+  height: 240px;
   overflow: hidden;
-  background: #020102;
-  border: 1px solid rgba(201,168,76,0.18);
+  background: #FFFFFF;
+  border: 1px solid rgba(160,120,30,0.3);
   position: relative;
 }
 
@@ -232,18 +231,18 @@ h1 {
 }
 .reel-outer::before {
   top: 0;
-  background: linear-gradient(to bottom, rgba(2,1,2,0.95) 0%, transparent 100%);
+  background: linear-gradient(to bottom, rgba(255,253,245,0.96) 0%, transparent 100%);
 }
 .reel-outer::after {
   bottom: 0;
-  background: linear-gradient(to top, rgba(2,1,2,0.95) 0%, transparent 100%);
+  background: linear-gradient(to top, rgba(255,253,245,0.96) 0%, transparent 100%);
 }
 
 /* win line */
 .win-line {
   position: absolute;
-  top: 76px; left: 0; right: 0;
-  height: 76px;
+  top: 80px; left: 0; right: 0;
+  height: 80px;
   border-top: 1px solid rgba(192,57,43,0.5);
   border-bottom: 1px solid rgba(192,57,43,0.5);
   background: linear-gradient(to bottom,
@@ -263,20 +262,20 @@ h1 {
 }
 
 .reel-item {
-  height: 76px;
+  height: 80px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 2px;
+  gap: 4px;
   padding: 4px 6px;
 }
-.reel-emoji { font-size: 1.5rem; line-height: 1; filter: saturate(0.7); }
+.reel-emoji { font-size: 1.65rem; line-height: 1; }
 .reel-name {
   font-family: 'Sarabun', sans-serif;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #5a4a30;
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: #2A1800;
   text-align: center;
   line-height: 1.2;
   letter-spacing: 0.03em;
@@ -343,27 +342,28 @@ h1 {
   width: 100%;
   max-width: 520px;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(160,120,30,0.25);
   border-radius: 4px;
   padding: 22px 18px;
   margin-bottom: 10px;
   text-align: center;
   display: none;
   position: relative;
+  box-shadow: 0 2px 16px rgba(100,60,0,0.08);
 }
 .result-panel::before {
   content: '';
   position: absolute;
   top: 0; left: 20px; right: 20px;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  background: linear-gradient(to right, transparent, var(--red-bright), transparent);
 }
 .result-panel.show { display: block; }
 
 .result-eyebrow {
   font-family: 'Cinzel', serif;
   font-size: 0.6rem;
-  color: var(--gold-dark);
+  color: var(--red-mid);
   letter-spacing: 0.25em;
   text-transform: uppercase;
   margin-bottom: 10px;
@@ -371,10 +371,7 @@ h1 {
 .result-text {
   font-size: 1.35rem;
   font-weight: 700;
-  background: linear-gradient(180deg, var(--gold-light), var(--gold));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #1E1206;
   margin-bottom: 14px;
   line-height: 1.4;
 }
@@ -414,22 +411,23 @@ h1 {
   width: 100%;
   max-width: 520px;
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(160,120,30,0.25);
   border-radius: 4px;
   padding: 18px 18px;
   position: relative;
+  box-shadow: 0 2px 16px rgba(100,60,0,0.08);
 }
 .history-panel::before {
   content: '';
   position: absolute;
   top: 0; left: 20px; right: 20px;
   height: 1px;
-  background: linear-gradient(to right, transparent, var(--gold), transparent);
+  background: linear-gradient(to right, transparent, var(--gold-dark), transparent);
 }
 .hist-label {
   font-family: 'Cinzel', serif;
   font-size: 0.62rem;
-  color: var(--gold-dark);
+  color: var(--red-mid);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   margin-bottom: 12px;
@@ -439,26 +437,38 @@ h1 {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(201,168,76,0.03);
-  border: 1px solid rgba(201,168,76,0.08);
+  background: rgba(160,120,30,0.04);
+  border: 1px solid rgba(160,120,30,0.12);
   padding: 10px 13px;
   font-size: 0.86rem;
 }
-.h-name { font-weight: 700; color: var(--text); }
-.h-sub  { font-size: 0.75rem; color: var(--text-dim); margin-top: 2px; }
+.h-name { font-weight: 700; color: #1E1206; }
+.h-sub  { font-size: 0.75rem; color: #9A7050; margin-top: 2px; }
 .h-base {
   font-size: 0.75rem;
   color: var(--gold-dark);
-  border: 1px solid rgba(201,168,76,0.2);
+  border: 1px solid rgba(160,120,30,0.25);
   padding: 3px 10px;
   letter-spacing: 0.04em;
 }
-.h-empty { text-align: center; color: #2a2010; font-size: 0.85rem; padding: 10px 0; }
+.h-empty { text-align: center; color: #C0A880; font-size: 0.85rem; padding: 10px 0; }
 
-/* reel spinning state — dim non-center items more */
-.reel-outer.spinning .reel-name { color: #2a1c0a; }
+/* reel spinning state — dim non-center items */
+.reel-outer.spinning .reel-name { color: #5a3a10; }
 </style>
 </head>
+<canvas id="coinCanvas"></canvas>
+<style>
+#coinCanvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  z-index: 0;
+}
+body > *:not(#coinCanvas) { position: relative; z-index: 1; }
+</style>
+
 <body>
 
 <!-- HEADER -->
@@ -511,9 +521,9 @@ h1 {
     <div class="filter-label">— Intensity —</div>
     <div class="chips" id="spicyFilter">
       <div class="chip active" data-value="all">Any</div>
-      <div class="chip" data-value="1">Mild 😌</div>
-      <div class="chip" data-value="2">Medium 😤</div>
-      <div class="chip" data-value="3">Intense 🔥🔥</div>
+      <div class="chip" data-value="1">รสอ่อน 😌</div>
+      <div class="chip" data-value="2">ปานกลาง 😤</div>
+      <div class="chip" data-value="3">รสจัดมาก 🔥🔥</div>
     </div>
   </div>
 </div>
@@ -612,7 +622,7 @@ const BASES = [
   { name:"มาม่า",    emoji:"🍜" },
 ];
 
-const SPICY_LABEL = { 1:"Mild 😌", 2:"Medium 😤", 3:"Intense 🔥🔥" };
+const SPICY_LABEL = { 1:"รสอ่อน 😌", 2:"รสปานกลาง 😤", 3:"รสจัดมาก 🔥🔥" };
 const SPICY_COLOR = { 1:"#4CAF50", 2:"#f39c12", 3:"#e74c3c" };
 
 let filters = { meat:"all", base:"all", clean:"all", spicy:"all" };
@@ -644,7 +654,7 @@ function getBasePool()  { return filters.base === 'all' ? BASES : [BASES[parseIn
 function pick(arr)      { return arr[Math.floor(Math.random() * arr.length)]; }
 
 // ── REEL ──
-const ITEM_H = 76;
+const ITEM_H = 80;
 const LOOPS  = 6;
 
 class Reel {
@@ -664,10 +674,11 @@ class Reel {
     this.pos = items.length;
     this._setY(false);
   }
-  _getY()  { return -(this.pos * ITEM_H) + ITEM_H; }
+  _getY()  { return -(this.pos * ITEM_H) + ITEM_H; } // centers item at pos
   _setY(smooth) {
     this.strip.style.transition = smooth ? 'transform 0.42s cubic-bezier(0.17, 0.67, 0.12, 1)' : 'none';
-    this.strip.style.transform  = `translateY(${this._getY()}px)`;
+    // item height changed to 80
+    this.strip.style.transform  = `translateY(${-(this.pos * 80) + 80}px)`;
   }
   startSpin(ms) {
     this.spinning = true;
@@ -778,6 +789,139 @@ function renderHistory() {
     list.appendChild(d);
   });
 }
+</script>
+
+<!-- ===== COIN RAIN ANIMATION ===== -->
+<script>
+(function() {
+  const canvas = document.getElementById('coinCanvas');
+  const ctx    = canvas.getContext('2d');
+
+  const COIN_R   = 11;   // coin radius px
+  const GRAVITY  = 0.28;
+  const SPAWN_MS = 1400; // new coin every N ms (gets faster over time)
+  const MAX_COLS = 60;   // grid columns for pile tracking
+
+  let W, H, colW;
+  let pile   = [];   // pile[col] = height of coin stack in that column (px from bottom)
+  let coins  = [];   // falling coins
+  let settled= [];   // settled coins (drawn statically)
+  let frameId;
+  let spawnTimer = 0;
+  let elapsed  = 0;
+  let lastTime = null;
+
+  function resize() {
+    W = canvas.width  = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    colW = W / MAX_COLS;
+    // re-init pile
+    pile = new Array(MAX_COLS).fill(0);
+    settled = [];
+    coins   = [];
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+
+  // Draw a single coin
+  function drawCoin(x, y, r, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+
+    // Outer gold ring
+    const grad = ctx.createRadialGradient(x - r*0.3, y - r*0.3, r*0.1, x, y, r);
+    grad.addColorStop(0,   '#F5E070');
+    grad.addColorStop(0.4, '#C9A030');
+    grad.addColorStop(0.8, '#8B6400');
+    grad.addColorStop(1,   '#6A4A00');
+
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Inner rim
+    ctx.beginPath();
+    ctx.arc(x, y, r * 0.72, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(255,220,80,0.5)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+
+    // Symbol ✦
+    ctx.fillStyle = 'rgba(255,240,120,0.85)';
+    ctx.font = `bold ${Math.round(r * 0.95)}px serif`;
+    ctx.textAlign    = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('✦', x, y + 0.5);
+
+    ctx.restore();
+  }
+
+  function spawnCoin() {
+    const col = Math.floor(Math.random() * MAX_COLS);
+    const x   = col * colW + colW / 2 + (Math.random() - 0.5) * colW * 0.5;
+    coins.push({
+      x,
+      y: -COIN_R,
+      vy: 1.5 + Math.random() * 2,
+      vx: (Math.random() - 0.5) * 0.6,
+      col,
+      wobble: Math.random() * Math.PI * 2,
+    });
+  }
+
+  function loop(ts) {
+    frameId = requestAnimationFrame(loop);
+
+    const dt = lastTime ? Math.min(ts - lastTime, 50) : 16;
+    lastTime = ts;
+    elapsed += dt;
+
+    // Spawn rate increases over time (max 1 coin / 500ms after 2 min)
+    const spawnInterval = Math.max(500, SPAWN_MS - elapsed * 0.3);
+    spawnTimer += dt;
+    if (spawnTimer >= spawnInterval) {
+      spawnCoin();
+      spawnTimer = 0;
+    }
+
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw settled coins
+    for (const c of settled) {
+      drawCoin(c.x, c.y, COIN_R, 0.82);
+    }
+
+    // Update & draw falling coins
+    for (let i = coins.length - 1; i >= 0; i--) {
+      const c = coins[i];
+      c.vy += GRAVITY;
+      c.y  += c.vy;
+      c.x  += c.vx;
+      c.wobble += 0.08;
+
+      // Floor = H - pile height for this column - coin radius
+      const col     = Math.max(0, Math.min(MAX_COLS - 1, Math.floor(c.x / colW)));
+      const floorY  = H - pile[col] - COIN_R;
+
+      if (c.y >= floorY) {
+        // Settle
+        c.y = floorY;
+        pile[col] += COIN_R * 1.6; // each coin adds to pile height
+        settled.push({ x: c.x, y: c.y });
+        coins.splice(i, 1);
+        continue;
+      }
+
+      // Slight horizontal wobble while falling
+      const drawX = c.x + Math.sin(c.wobble) * 1.2;
+      drawCoin(drawX, c.y, COIN_R, 0.9);
+    }
+  }
+
+  requestAnimationFrame(loop);
+})();
 </script>
 </body>
 </html>
